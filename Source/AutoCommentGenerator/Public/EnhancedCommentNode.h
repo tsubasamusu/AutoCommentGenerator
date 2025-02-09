@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "SGraphNodeComment.h"
 
+class UEdGraphNode_Comment;
+
 class SEnhancedCommentNode final : public SGraphNodeComment
 {
 	typedef SGraphNodeComment Super;
@@ -19,4 +21,6 @@ public:
 
 private:
 	void SetComment(const FString& NewComment);
+
+	TArray<UEdGraphNode*> GetNodesUnderThisComment();
 };
