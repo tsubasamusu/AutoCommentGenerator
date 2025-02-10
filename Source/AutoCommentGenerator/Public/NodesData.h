@@ -13,6 +13,15 @@ struct FPinData
 public:
     UPROPERTY();
     FString PinName;
+
+    UPROPERTY()
+    FString PinId;
+
+    UPROPERTY()
+    TArray<FString> IdsOfPinsConnectedToMyself;
+
+    UPROPERTY()
+    FString PinType;
 };
 
 USTRUCT()

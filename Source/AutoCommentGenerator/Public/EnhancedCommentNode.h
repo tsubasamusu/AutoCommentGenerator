@@ -28,7 +28,11 @@ private:
 
 	FString GetNodesDataUnderThisCommentAsJsonString();
 
-	static TArray<FNodeData> GetNodesData(const TArray<UEdGraphNode*>& SourceNodes);
+	static TArray<FNodeData> GetNodesData(const TArray<UEdGraphNode*>& InNodes);
 
-	static TArray<FPinData> GetPinsData(const UEdGraphNode* SourceNode);
+	static TArray<FPinData> GetPinsData(const UEdGraphNode* InNode);
+	
+	static TArray<FString> GetPinIds(const TArray<UEdGraphPin*>& InPins);
+
+	static FString GetPinTypeAsString(const UEdGraphPin* InPin);
 };

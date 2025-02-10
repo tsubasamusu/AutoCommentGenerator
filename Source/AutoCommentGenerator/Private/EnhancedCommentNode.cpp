@@ -71,11 +71,11 @@ FString SEnhancedCommentNode::GetNodesDataUnderThisCommentAsJsonString()
 	return JsonString;
 }
 
-TArray<FNodeData> SEnhancedCommentNode::GetNodesData(const TArray<UEdGraphNode*>& SourceNodes)
+TArray<FNodeData> SEnhancedCommentNode::GetNodesData(const TArray<UEdGraphNode*>& InNodes)
 {
 	TArray<FNodeData> NodesData;
 
-	for (UEdGraphNode* SourceNode : SourceNodes)
+	for (UEdGraphNode* SourceNode : InNodes)
 	{
 		FNodeData NodeData;
 
@@ -87,18 +87,49 @@ TArray<FNodeData> SEnhancedCommentNode::GetNodesData(const TArray<UEdGraphNode*>
 	return NodesData;
 }
 
-TArray<FPinData> SEnhancedCommentNode::GetPinsData(const UEdGraphNode* SourceNode)
+TArray<FPinData> SEnhancedCommentNode::GetPinsData(const UEdGraphNode* InNode)
 {
 	TArray<FPinData> PinsData;
 
-	for (UEdGraphPin* Pin : SourceNode->Pins)
+	for (UEdGraphPin* Pin : InNode->Pins)
 	{
+		// ignore pins that are not connected anywhere
+		if (Pin->LinkedTo.Num() == 0) continue;
+
 		FPinData PinData;
 
-		PinData.PinName = Pin->PinName.ToString();
+		PinData.PinName = Pin->GetDisplayName().IsEmpty() ? Pin->PinName.ToString() : Pin->GetDisplayName().ToString();
+		PinData.PinId = Pin->PinId.ToString();
+		PinData.IdsOfPinsConnectedToMyself = GetPinIds(Pin->LinkedTo);
+		PinData.PinType = GetPinTypeAsString(Pin);
 
 		PinsData.Add(PinData);
 	}
 
 	return PinsData;
+}
+
+TArray<FString> SEnhancedCommentNode::GetPinIds(const TArray<UEdGraphPin*>& InPins)
+{
+	TArray<FString> PinIds;
+
+	for (UEdGraphPin* Pin : InPins)
+	{
+		PinIds.Add(Pin->PinId.ToString());
+	}
+
+	return PinIds;
+}
+
+FString SEnhancedCommentNode::GetPinTypeAsString(const UEdGraphPin* InPin)
+{
+	switch (InPin->Direction)
+	{
+	case EEdGraphPinDirection::EGPD_Input:
+		return TEXT("Input");
+	case EEdGraphPinDirection::EGPD_Output:
+		return TEXT("Output");
+	default:
+		return TEXT("UnknownType");
+	}
 }
