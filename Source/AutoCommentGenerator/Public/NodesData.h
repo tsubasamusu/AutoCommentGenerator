@@ -18,7 +18,7 @@ public:
     FString PinId;
 
     UPROPERTY()
-    TArray<FString> IdsOfPinsConnectedToMyself;
+    TArray<FString> ConnectedPinIds;
 
     UPROPERTY()
     FString PinType;
@@ -35,6 +35,9 @@ public:
 
     UPROPERTY()
     FString Comment;
+
+    UPROPERTY()
+    bool IsCommentNode;
 };
 
 USTRUCT()

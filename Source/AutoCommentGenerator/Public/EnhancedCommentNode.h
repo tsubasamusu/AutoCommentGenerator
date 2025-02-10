@@ -38,5 +38,7 @@ private:
 
 	static TArray<UEdGraphNode*> GetActiveNodes(const TArray<UEdGraphNode*>& InNodes);
 	
-	static bool HasAnyConnectedPins(const UEdGraphNode* InNode);
+	static bool HasConnectedPins(const UEdGraphNode* InNode);
+
+	static bool IsCommentNode(const UEdGraphNode* InNode);
 };

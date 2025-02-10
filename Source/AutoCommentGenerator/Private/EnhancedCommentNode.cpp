@@ -81,6 +81,7 @@ TArray<FNodeData> SEnhancedCommentNode::GetNodesData(const TArray<UEdGraphNode*>
 
 		NodeData.Pins = GetPinsData(Node);
 		NodeData.Comment = Node->NodeComment;
+		NodeData.IsCommentNode = IsCommentNode(Node);
 
 		NodesData.Add(NodeData);
 	}
@@ -101,7 +102,7 @@ TArray<FPinData> SEnhancedCommentNode::GetPinsData(const UEdGraphNode* InNode)
 
 		PinData.PinName = Pin->GetDisplayName().IsEmpty() ? Pin->PinName.ToString() : Pin->GetDisplayName().ToString();
 		PinData.PinId = Pin->PinId.ToString();
-		PinData.IdsOfPinsConnectedToMyself = GetPinIds(Pin->LinkedTo);
+		PinData.ConnectedPinIds = GetPinIds(Pin->LinkedTo);
 		PinData.PinType = GetPinTypeAsString(Pin);
 
 		PinsData.Add(PinData);
@@ -141,7 +142,8 @@ TArray<UEdGraphNode*> SEnhancedCommentNode::GetActiveNodes(const TArray<UEdGraph
 
 	for (UEdGraphNode* Node : InNodes)
 	{
-		if (!HasAnyConnectedPins(Node)) continue;
+		// ignore nodes that do not have connected pins and are not comment nodes
+		if (!HasConnectedPins(Node) && !IsCommentNode(Node)) continue;
 
 		ActiveNodes.Add(Node);
 	}
@@ -149,7 +151,12 @@ TArray<UEdGraphNode*> SEnhancedCommentNode::GetActiveNodes(const TArray<UEdGraph
 	return ActiveNodes;
 }
 
-bool SEnhancedCommentNode::HasAnyConnectedPins(const UEdGraphNode* InNode)
+bool SEnhancedCommentNode::HasConnectedPins(const UEdGraphNode* InNode)
 {
 	return GetPinsData(InNode).Num() > 0;
+}
+
+bool SEnhancedCommentNode::IsCommentNode(const UEdGraphNode* InNode)
+{
+	return IsValid(Cast<UEdGraphNode_Comment>(InNode));
 }
