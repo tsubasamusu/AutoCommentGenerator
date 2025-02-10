@@ -35,4 +35,8 @@ private:
 	static TArray<FString> GetPinIds(const TArray<UEdGraphPin*>& InPins);
 
 	static FString GetPinTypeAsString(const UEdGraphPin* InPin);
+
+	static TArray<UEdGraphNode*> GetActiveNodes(const TArray<UEdGraphNode*>& InNodes);
+	
+	static bool HasAnyConnectedPins(const UEdGraphNode* InNode);
 };

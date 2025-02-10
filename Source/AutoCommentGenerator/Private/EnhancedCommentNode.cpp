@@ -55,15 +55,15 @@ TArray<UEdGraphNode*> SEnhancedCommentNode::GetNodesUnderThisComment()
 
 FString SEnhancedCommentNode::GetNodesDataUnderThisCommentAsJsonString()
 {
- 	TArray<UEdGraphNode*> NodesUnderThisComment = GetNodesUnderThisComment();
+ 	const TArray<UEdGraphNode*> ActiveNodesUnderThisComment = GetActiveNodes(GetNodesUnderThisComment());
  
- 	if (NodesUnderThisComment.Num() == 0) return FString();
+ 	if (ActiveNodesUnderThisComment.Num() == 0) return FString();
 
-	FNodesData NodesData = FNodesData(GetNodesData(NodesUnderThisComment));
+	const TArray<FNodeData> NodesData = GetNodesData(ActiveNodesUnderThisComment);
 
 	FString JsonString;
 
-	if (!FJsonObjectConverter::UStructToJsonObjectString(NodesData, JsonString, 0, 0))
+	if (!FJsonObjectConverter::UStructToJsonObjectString(FNodesData(NodesData), JsonString, 0, 0))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to serialize the json object."));
 	}
@@ -75,11 +75,12 @@ TArray<FNodeData> SEnhancedCommentNode::GetNodesData(const TArray<UEdGraphNode*>
 {
 	TArray<FNodeData> NodesData;
 
-	for (UEdGraphNode* SourceNode : InNodes)
+	for (UEdGraphNode* Node : InNodes)
 	{
 		FNodeData NodeData;
 
-		NodeData.Pins = GetPinsData(SourceNode);
+		NodeData.Pins = GetPinsData(Node);
+		NodeData.Comment = Node->NodeComment;
 
 		NodesData.Add(NodeData);
 	}
@@ -132,4 +133,23 @@ FString SEnhancedCommentNode::GetPinTypeAsString(const UEdGraphPin* InPin)
 	default:
 		return TEXT("UnknownType");
 	}
+}
+
+TArray<UEdGraphNode*> SEnhancedCommentNode::GetActiveNodes(const TArray<UEdGraphNode*>& InNodes)
+{
+	TArray<UEdGraphNode*> ActiveNodes;
+
+	for (UEdGraphNode* Node : InNodes)
+	{
+		if (!HasAnyConnectedPins(Node)) continue;
+
+		ActiveNodes.Add(Node);
+	}
+
+	return ActiveNodes;
+}
+
+bool SEnhancedCommentNode::HasAnyConnectedPins(const UEdGraphNode* InNode)
+{
+	return GetPinsData(InNode).Num() > 0;
 }

@@ -32,6 +32,9 @@ struct FNodeData
 public:
     UPROPERTY()
     TArray<FPinData> Pins;
+
+    UPROPERTY()
+    FString Comment;
 };
 
 USTRUCT()
