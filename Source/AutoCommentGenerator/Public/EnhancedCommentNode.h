@@ -6,6 +6,8 @@
 #include "SGraphNodeComment.h"
 
 class UEdGraphNode_Comment;
+struct FNodeData;
+struct FPinData;
 
 class SEnhancedCommentNode final : public SGraphNodeComment
 {
@@ -23,4 +25,10 @@ private:
 	void SetComment(const FString& NewComment);
 
 	TArray<UEdGraphNode*> GetNodesUnderThisComment();
+
+	FString GetNodesDataUnderThisCommentAsJsonString();
+
+	static TArray<FNodeData> GetNodesData(const TArray<UEdGraphNode*>& SourceNodes);
+
+	static TArray<FPinData> GetPinsData(const UEdGraphNode* SourceNode);
 };
