@@ -15,13 +15,13 @@ public:
     FString PinName;
 
     UPROPERTY()
+    FString PinType;
+
+    UPROPERTY()
     FString PinId;
 
     UPROPERTY()
     TArray<FString> ConnectedPinIds;
-
-    UPROPERTY()
-    FString PinType;
 };
 
 USTRUCT()
@@ -31,13 +31,16 @@ struct FNodeData
 
 public:
     UPROPERTY()
-    TArray<FPinData> Pins;
-
+    FString NodeName;
+    
     UPROPERTY()
     FString Comment;
 
     UPROPERTY()
     bool IsCommentNode;
+
+    UPROPERTY()
+    TArray<FPinData> Pins;
 };
 
 USTRUCT()

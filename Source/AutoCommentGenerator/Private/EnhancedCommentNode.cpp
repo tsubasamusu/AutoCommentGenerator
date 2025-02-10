@@ -79,9 +79,10 @@ TArray<FNodeData> SEnhancedCommentNode::GetNodesData(const TArray<UEdGraphNode*>
 	{
 		FNodeData NodeData;
 
-		NodeData.Pins = GetPinsData(Node);
+		NodeData.NodeName = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
 		NodeData.Comment = Node->NodeComment;
 		NodeData.IsCommentNode = IsCommentNode(Node);
+		NodeData.Pins = GetPinsData(Node);
 
 		NodesData.Add(NodeData);
 	}
@@ -93,7 +94,7 @@ TArray<FPinData> SEnhancedCommentNode::GetPinsData(const UEdGraphNode* InNode)
 {
 	TArray<FPinData> PinsData;
 
-	for (UEdGraphPin* Pin : InNode->Pins)
+	for (UEdGraphPin* Pin : InNode->GetAllPins())
 	{
 		// ignore pins that are not connected anywhere
 		if (Pin->LinkedTo.Num() == 0) continue;
