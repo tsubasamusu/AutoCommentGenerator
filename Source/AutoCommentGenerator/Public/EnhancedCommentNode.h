@@ -41,4 +41,6 @@ private:
 	static bool HasConnectedPins(const UEdGraphNode* InNode);
 
 	static bool IsCommentNode(const UEdGraphNode* InNode);
+	
+	static bool IsPinUsesDefaultValue(const UEdGraphPin* InPin);
 };
