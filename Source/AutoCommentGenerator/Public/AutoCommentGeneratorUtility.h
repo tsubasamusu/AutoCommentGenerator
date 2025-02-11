@@ -6,6 +6,7 @@
 
 struct FNodeData;
 struct FPinData;
+struct FSlateBrush;
 class UEdGraphNode;
 class UEdGraphPin;
 
@@ -26,4 +27,8 @@ struct FAutoCommentGeneratorUtility
 	static bool IsCommentNode(const UEdGraphNode* InNode);
 
 	static bool IsPinUsesDefaultValue(const UEdGraphPin* InPin);
+	
+	const static FSlateBrush* GetPlayIcon();
+
+	const static FSlateBrush* GetStopIcon();
 };

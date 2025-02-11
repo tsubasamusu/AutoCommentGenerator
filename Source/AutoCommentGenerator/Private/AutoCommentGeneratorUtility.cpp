@@ -5,6 +5,7 @@
 #include "JsonObjectConverter.h"
 #include "EdGraph/EdGraphPin.h"
 #include "NodesData.h"
+#include "Styling/AppStyle.h"
 
 TArray<FNodeData> FAutoCommentGeneratorUtility::GetNodesData(const TArray<UEdGraphNode*>& InNodes)
 {
@@ -106,4 +107,14 @@ bool FAutoCommentGeneratorUtility::IsCommentNode(const UEdGraphNode* InNode)
 bool FAutoCommentGeneratorUtility::IsPinUsesDefaultValue(const UEdGraphPin* InPin)
 {
 	return !InPin->HasAnyConnections() && InPin->Direction == EEdGraphPinDirection::EGPD_Input;
+}
+
+const FSlateBrush* FAutoCommentGeneratorUtility::GetPlayIcon()
+{
+	return FAppStyle::Get().GetBrush("Animation.Forward");
+}
+
+const FSlateBrush* FAutoCommentGeneratorUtility::GetStopIcon()
+{
+	return FAppStyle::Get().GetBrush("Animation.Pause");
 }

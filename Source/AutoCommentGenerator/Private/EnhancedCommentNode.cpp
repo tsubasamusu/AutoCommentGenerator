@@ -118,7 +118,7 @@ void SEnhancedCommentNode::CreateGenerateCommentButton(const FVector2D& TitleBar
 											TSharedRef<SWidget>(
 												SNew(SImage)
 												.ColorAndOpacity(FLinearColor::White)
-												.Image(FCoreStyle::Get().GetBrush("EditableComboBox.Add"))
+												.Image(FAutoCommentGeneratorUtility::GetPlayIcon())
 												)
 										]
 								]
