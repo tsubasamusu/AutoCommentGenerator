@@ -22,4 +22,9 @@ public:
 	TArray<UEdGraphNode*> GetNodesUnderThisComment();
 
 	FString GetNodesDataUnderThisCommentAsJsonString();
+
+	bool TryGetTitleBarSize(FVector2D& OutTitleBarSize);
+
+protected:
+	virtual void UpdateGraphNode() override;
 };

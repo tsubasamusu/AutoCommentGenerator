@@ -15,9 +15,6 @@ void SEnhancedCommentNode::Construct(const FArguments& InArgs, UEdGraphNode_Comm
 void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
 {
 	Super::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
-
-	// debug
-	FAutoCommentGeneratorLogUtility::Log(GetNodesDataUnderThisCommentAsJsonString());
 }
 
 void SEnhancedCommentNode::SetComment(const FString& NewComment)
@@ -70,4 +67,16 @@ FString SEnhancedCommentNode::GetNodesDataUnderThisCommentAsJsonString()
 	}
 
 	return JsonString;
+}
+
+bool SEnhancedCommentNode::TryGetTitleBarSize(FVector2D& OutTitleBarSize)
+{
+	OutTitleBarSize = GetDesiredSizeForMarquee();
+
+	return !OutTitleBarSize.IsZero();
+}
+
+void SEnhancedCommentNode::UpdateGraphNode()
+{
+	Super::UpdateGraphNode();
 }
