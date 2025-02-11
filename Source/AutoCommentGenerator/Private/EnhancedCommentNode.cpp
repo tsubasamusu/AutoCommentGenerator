@@ -15,6 +15,16 @@ void SEnhancedCommentNode::Construct(const FArguments& InArgs, UEdGraphNode_Comm
 void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
 {
 	Super::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
+
+	if (bHasCreatedGenerateCommentButton) return;
+
+	FVector2D TitleBarSize;
+
+	if (!TryGetTitleBarSize(TitleBarSize)) return;
+
+	CreateGenerateCommentButton(TitleBarSize);
+
+	bHasCreatedGenerateCommentButton = true;
 }
 
 void SEnhancedCommentNode::SetComment(const FString& NewComment)
@@ -69,14 +79,21 @@ FString SEnhancedCommentNode::GetNodesDataUnderThisCommentAsJsonString()
 	return JsonString;
 }
 
-bool SEnhancedCommentNode::TryGetTitleBarSize(FVector2D& OutTitleBarSize)
+bool SEnhancedCommentNode::TryGetTitleBarSize(FVector2D& OutTitleBarSize) const
 {
 	OutTitleBarSize = GetDesiredSizeForMarquee();
 
 	return !OutTitleBarSize.IsZero();
 }
 
-void SEnhancedCommentNode::UpdateGraphNode()
+void SEnhancedCommentNode::CreateGenerateCommentButton(const FVector2D& TitleBarSize)
 {
-	Super::UpdateGraphNode();
+
+}
+
+FReply SEnhancedCommentNode::OnClickedGenerateCommentButton()
+{
+	FAutoCommentGeneratorLogUtility::Log(TEXT("clicked generate comment button"));
+
+	return FReply::Handled();
 }

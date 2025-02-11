@@ -23,8 +23,12 @@ public:
 
 	FString GetNodesDataUnderThisCommentAsJsonString();
 
-	bool TryGetTitleBarSize(FVector2D& OutTitleBarSize);
+	bool TryGetTitleBarSize(FVector2D& OutTitleBarSize) const;
 
-protected:
-	virtual void UpdateGraphNode() override;
+private:
+	void CreateGenerateCommentButton(const FVector2D& TitleBarSize);
+
+	FReply OnClickedGenerateCommentButton();
+
+	bool bHasCreatedGenerateCommentButton;
 };
