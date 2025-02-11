@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "SGraphNodeComment.h"
 
+class SImage;
+
 class SEnhancedCommentNode : public SGraphNodeComment
 {
 	typedef SGraphNodeComment Super;
@@ -25,10 +27,14 @@ public:
 
 	bool TryGetTitleBarSize(FVector2D& OutTitleBarSize) const;
 
+	void SetGenerateCommentButtonImage(const FSlateBrush* InSlateBrush);
+
 private:
 	void CreateGenerateCommentButton(const FVector2D& TitleBarSize);
 
 	FReply OnClickedGenerateCommentButton();
 
 	bool bHasCreatedGenerateCommentButton;
+
+	TSharedPtr<SImage> GenerateCommentButtonImage;
 };

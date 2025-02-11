@@ -89,8 +89,24 @@ bool SEnhancedCommentNode::TryGetTitleBarSize(FVector2D& OutTitleBarSize) const
 	return !OutTitleBarSize.IsZero();
 }
 
+void SEnhancedCommentNode::SetGenerateCommentButtonImage(const FSlateBrush* InSlateBrush)
+{
+	if (!GenerateCommentButtonImage.IsValid())
+	{
+		FAutoCommentGeneratorLogUtility::LogError(TEXT("Failed to set brush to the generate comment button."));
+
+		return;
+	}
+
+	GenerateCommentButtonImage->SetImage(InSlateBrush);
+}
+
 void SEnhancedCommentNode::CreateGenerateCommentButton(const FVector2D& TitleBarSize)
 {
+	GenerateCommentButtonImage = SNew(SImage)
+		.ColorAndOpacity(FLinearColor::White)
+		.Image(FAutoCommentGeneratorUtility::GetPlayIcon());
+
 	this->GetOrAddSlot(ENodeZone::TopRight)
 		[
 			SNew(SBox)
@@ -115,11 +131,7 @@ void SEnhancedCommentNode::CreateGenerateCommentButton(const FVector2D& TitleBar
 										.HAlign(HAlign_Fill)
 										.VAlign(VAlign_Fill)
 										[
-											TSharedRef<SWidget>(
-												SNew(SImage)
-												.ColorAndOpacity(FLinearColor::White)
-												.Image(FAutoCommentGeneratorUtility::GetPlayIcon())
-												)
+											GenerateCommentButtonImage.ToSharedRef()
 										]
 								]
 						]
