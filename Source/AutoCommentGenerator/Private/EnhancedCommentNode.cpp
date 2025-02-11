@@ -6,6 +6,9 @@
 #include "NodesData.h"
 #include "AutoCommentGeneratorUtility.h"
 #include "AutoCommentGeneratorLogUtility.h"
+#include "Widgets/Input/SButton.h"
+#include "Widgets/Layout/SBox.h"
+#include "Widgets/Images/SImage.h"
 
 void SEnhancedCommentNode::Construct(const FArguments& InArgs, UEdGraphNode_Comment* InNode)
 {
@@ -88,7 +91,40 @@ bool SEnhancedCommentNode::TryGetTitleBarSize(FVector2D& OutTitleBarSize) const
 
 void SEnhancedCommentNode::CreateGenerateCommentButton(const FVector2D& TitleBarSize)
 {
-
+	this->GetOrAddSlot(ENodeZone::TopRight)
+		[
+			SNew(SBox)
+				.HAlign(HAlign_Right)
+				.VAlign(VAlign_Top)
+				.Padding(0.f, TitleBarSize.Y + 10.f, 10.f, 0.f)
+				[
+					SNew(SBox)
+						.WidthOverride(15)
+						.HeightOverride(15)
+						[
+							SNew(SButton)
+								.HAlign(HAlign_Fill)
+								.VAlign(VAlign_Fill)
+								.ContentPadding(0)
+								.ButtonStyle(FAppStyle::Get(), TEXT("NoBorder"))
+								.ButtonColorAndOpacity(GetCommentTitleBarColor())
+								.OnClicked(this, &SEnhancedCommentNode::OnClickedGenerateCommentButton)
+								.ToolTipText(FText::FromString("Generate comment using AI"))
+								[
+									SNew(SBox)
+										.HAlign(HAlign_Fill)
+										.VAlign(VAlign_Fill)
+										[
+											TSharedRef<SWidget>(
+												SNew(SImage)
+												.ColorAndOpacity(FLinearColor::White)
+												.Image(FCoreStyle::Get().GetBrush("EditableComboBox.Add"))
+												)
+										]
+								]
+						]
+				]
+		];
 }
 
 FReply SEnhancedCommentNode::OnClickedGenerateCommentButton()
