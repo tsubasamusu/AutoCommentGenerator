@@ -3,8 +3,9 @@
 #include "EnhancedCommentNode.h"
 #include "EdGraphNode_Comment.h"
 #include "JsonObjectConverter.h"
-#include "EdGraph/EdGraphPin.h"
 #include "NodesData.h"
+#include "AutoCommentGeneratorUtility.h"
+#include "AutoCommentGeneratorLogUtility.h"
 
 void SEnhancedCommentNode::Construct(const FArguments& InArgs, UEdGraphNode_Comment* InNode)
 {
@@ -16,7 +17,7 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 	Super::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
 
 	// debug
-	UE_LOG(LogTemp, Log, TEXT("%s"), *GetNodesDataUnderThisCommentAsJsonString());
+	FAutoCommentGeneratorLogUtility::Log(GetNodesDataUnderThisCommentAsJsonString());
 }
 
 void SEnhancedCommentNode::SetComment(const FString& NewComment)
@@ -32,8 +33,8 @@ TArray<UEdGraphNode*> SEnhancedCommentNode::GetNodesUnderThisComment()
 
 	if (!IsValid(CommentNode))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Type of the node being observed by SEnhancedCommentNode is not UEdGraphNode_Comment."));
-
+		FAutoCommentGeneratorLogUtility::LogError(TEXT("Type of the node being observed by SEnhancedCommentNode is not UEdGraphNode_Comment."));
+		
 		return TArray<UEdGraphNode*>();
 	}
 
@@ -55,120 +56,18 @@ TArray<UEdGraphNode*> SEnhancedCommentNode::GetNodesUnderThisComment()
 
 FString SEnhancedCommentNode::GetNodesDataUnderThisCommentAsJsonString()
 {
- 	const TArray<UEdGraphNode*> ActiveNodesUnderThisComment = GetActiveNodes(GetNodesUnderThisComment());
+ 	const TArray<UEdGraphNode*> ActiveNodesUnderThisComment = FAutoCommentGeneratorUtility::GetActiveNodes(GetNodesUnderThisComment());
  
  	if (ActiveNodesUnderThisComment.Num() == 0) return FString();
 
-	const TArray<FNodeData> NodesData = GetNodesData(ActiveNodesUnderThisComment);
+	const TArray<FNodeData> NodesData = FAutoCommentGeneratorUtility::GetNodesData(ActiveNodesUnderThisComment);
 
 	FString JsonString;
 
 	if (!FJsonObjectConverter::UStructToJsonObjectString(FNodesData(NodesData), JsonString, 0, 0))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to serialize the json object."));
+		FAutoCommentGeneratorLogUtility::LogError(TEXT("Failed to convert FNodesData to JSON string."));
 	}
 
 	return JsonString;
-}
-
-TArray<FNodeData> SEnhancedCommentNode::GetNodesData(const TArray<UEdGraphNode*>& InNodes)
-{
-	TArray<FNodeData> NodesData;
-
-	for (UEdGraphNode* Node : InNodes)
-	{
-		FNodeData NodeData;
-
-		NodeData.NodeName = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
-		NodeData.Comment = Node->NodeComment;
-		NodeData.bIsCommentNode = IsCommentNode(Node);
-		NodeData.Pins = GetPinsData(Node);
-
-		NodesData.Add(NodeData);
-	}
-
-	return NodesData;
-}
-
-TArray<FPinData> SEnhancedCommentNode::GetPinsData(const UEdGraphNode* InNode)
-{
-	TArray<FPinData> PinsData;
-
-	for (UEdGraphPin* Pin : InNode->GetAllPins())
-	{
-		FPinData PinData;
-
-		PinData.PinName = Pin->GetDisplayName().IsEmpty() ? Pin->PinName.ToString() : Pin->GetDisplayName().ToString();
-		PinData.PinType = GetPinTypeAsString(Pin);
-		PinData.PinId = Pin->PinId.ToString();
-		PinData.DefaultValue = Pin->GetDefaultAsString();
-		PinData.bDefaultValueIsUsed = IsPinUsesDefaultValue(Pin);
-		PinData.ConnectedPinIds = GetPinIds(Pin->LinkedTo);
-
-		PinsData.Add(PinData);
-	}
-
-	return PinsData;
-}
-
-TArray<FString> SEnhancedCommentNode::GetPinIds(const TArray<UEdGraphPin*>& InPins)
-{
-	TArray<FString> PinIds;
-
-	for (UEdGraphPin* Pin : InPins)
-	{
-		PinIds.Add(Pin->PinId.ToString());
-	}
-
-	return PinIds;
-}
-
-FString SEnhancedCommentNode::GetPinTypeAsString(const UEdGraphPin* InPin)
-{
-	switch (InPin->Direction)
-	{
-	case EEdGraphPinDirection::EGPD_Input:
-		return TEXT("Input");
-	case EEdGraphPinDirection::EGPD_Output:
-		return TEXT("Output");
-	default:
-		return TEXT("UnknownType");
-	}
-}
-
-TArray<UEdGraphNode*> SEnhancedCommentNode::GetActiveNodes(const TArray<UEdGraphNode*>& InNodes)
-{
-	TArray<UEdGraphNode*> ActiveNodes;
-
-	for (UEdGraphNode* Node : InNodes)
-	{
-		// ignore nodes that do not have connected pins and are not comment nodes
-		if (!HasConnectedPins(Node) && !IsCommentNode(Node)) continue;
-
-		ActiveNodes.Add(Node);
-	}
-
-	return ActiveNodes;
-}
-
-bool SEnhancedCommentNode::HasConnectedPins(const UEdGraphNode* InNode)
-{
-	TArray<UEdGraphPin*> Pins = InNode->GetAllPins();
-
-	for (UEdGraphPin* Pin : Pins)
-	{
-		if (Pin->HasAnyConnections()) return true;
-	}
-
-	return false;
-}
-
-bool SEnhancedCommentNode::IsCommentNode(const UEdGraphNode* InNode)
-{
-	return IsValid(Cast<UEdGraphNode_Comment>(InNode));
-}
-
-bool SEnhancedCommentNode::IsPinUsesDefaultValue(const UEdGraphPin* InPin)
-{
-	return !InPin->HasAnyConnections() && InPin->Direction == EEdGraphPinDirection::EGPD_Input;
 }
