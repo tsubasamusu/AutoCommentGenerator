@@ -34,7 +34,13 @@ private:
 
 	FReply OnClickedGenerateCommentButton();
 
+	void StartGeneratingComment();
+
+	void StopGeneratingComment();
+
 	bool bHasCreatedGenerateCommentButton;
+
+	bool bIsGeneratingComment;
 
 	TSharedPtr<SImage> GenerateCommentButtonImage;
 };

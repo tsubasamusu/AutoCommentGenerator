@@ -10,8 +10,9 @@ struct FSlateBrush;
 class UEdGraphNode;
 class UEdGraphPin;
 
-struct FAutoCommentGeneratorUtility
+class FAutoCommentGeneratorUtility
 {
+public:
 	static TArray<FNodeData> GetNodesData(const TArray<UEdGraphNode*>& InNodes);
 
 	static TArray<FPinData> GetPinsData(const UEdGraphNode* InNode);

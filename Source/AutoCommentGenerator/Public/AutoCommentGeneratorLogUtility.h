@@ -6,7 +6,7 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(AutoCommentGeneratorLog, Log, All);
 
-struct FAutoCommentGeneratorLogUtility
+class FAutoCommentGeneratorLogUtility
 {
 public:
 	static void Log(const FString& InMessage);

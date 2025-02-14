@@ -141,7 +141,28 @@ void SEnhancedCommentNode::CreateGenerateCommentButton(const FVector2D& TitleBar
 
 FReply SEnhancedCommentNode::OnClickedGenerateCommentButton()
 {
-	FAutoCommentGeneratorLogUtility::Log(TEXT("clicked generate comment button"));
+	if (bIsGeneratingComment)
+	{
+		StopGeneratingComment();
+	}
+	else
+	{
+		StartGeneratingComment();
+	}
+
+	SetGenerateCommentButtonImage(bIsGeneratingComment ? FAutoCommentGeneratorUtility::GetPlayIcon() : FAutoCommentGeneratorUtility::GetStopIcon());
+	
+	bIsGeneratingComment = !bIsGeneratingComment;
 
 	return FReply::Handled();
+}
+
+void SEnhancedCommentNode::StartGeneratingComment()
+{
+	FAutoCommentGeneratorLogUtility::Log(TEXT("StartGeneratingComment"));
+}
+
+void SEnhancedCommentNode::StopGeneratingComment()
+{
+	FAutoCommentGeneratorLogUtility::Log(TEXT("StopGeneratingComment"));
 }
