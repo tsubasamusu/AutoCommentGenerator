@@ -42,5 +42,15 @@ private:
 
 	bool bIsGeneratingComment;
 
+	bool bIsPlayingAnimation;
+
+	FString PreviousEnteredComment;
+
+	FString CurrentComment;
+
+	float AnimationElapsedSeconds;
+
+	const float AnimationSpan = 0.3f;
+
 	TSharedPtr<SImage> GenerateCommentButtonImage;
 };

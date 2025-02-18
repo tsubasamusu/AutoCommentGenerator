@@ -13,21 +13,60 @@
 void SEnhancedCommentNode::Construct(const FArguments& InArgs, UEdGraphNode_Comment* InNode)
 {
 	Super::Construct(SGraphNodeComment::FArguments(), InNode);
+
+	CurrentComment = GetNodeComment();
 }
 
 void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
 {
 	Super::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
 
-	if (bHasCreatedGenerateCommentButton) return;
+	// play generate comment animation
+	if (bIsPlayingAnimation)
+	{
+		AnimationElapsedSeconds += InDeltaTime;
 
-	FVector2D TitleBarSize;
+		if (AnimationElapsedSeconds >= AnimationSpan)
+		{
+			FString Comment = TEXT("Generating Comment");
 
-	if (!TryGetTitleBarSize(TitleBarSize)) return;
+			if (FAutoCommentGeneratorUtility::GetCharNum(CurrentComment, '.') < 3)
+			{
+				int32 DesiredDotNum = (FAutoCommentGeneratorUtility::GetCharNum(CurrentComment, '.') % 3) + 1;
 
-	CreateGenerateCommentButton(TitleBarSize);
+				for (int32 i = 0; i < DesiredDotNum; i++)
+				{
+					Comment += TEXT(".");
+				};
+			}
 
-	bHasCreatedGenerateCommentButton = true;
+			SetComment(Comment);
+
+			AnimationElapsedSeconds = 0.f;
+		}
+	}
+	else
+	{
+		AnimationElapsedSeconds = 0.f;
+
+		if (GetNodeComment() != CurrentComment)
+		{
+			SetComment(CurrentComment);
+		}
+	}
+
+	// create generate comment button
+	if (!bHasCreatedGenerateCommentButton)
+	{
+		FVector2D TitleBarSize;
+
+		if (TryGetTitleBarSize(TitleBarSize))
+		{
+			CreateGenerateCommentButton(TitleBarSize);
+
+			bHasCreatedGenerateCommentButton = true;
+		}
+	}
 }
 
 void SEnhancedCommentNode::SetComment(const FString& NewComment)
@@ -35,6 +74,8 @@ void SEnhancedCommentNode::SetComment(const FString& NewComment)
 	//TODO:enable Japanese input too
 
 	OnCommentTextCommitted(FText::FromString(NewComment), ETextCommit::Type::Default);
+
+	CurrentComment = NewComment;
 }
 
 TArray<UEdGraphNode*> SEnhancedCommentNode::GetNodesUnderThisComment()
@@ -150,19 +191,25 @@ FReply SEnhancedCommentNode::OnClickedGenerateCommentButton()
 		StartGeneratingComment();
 	}
 
-	SetGenerateCommentButtonImage(bIsGeneratingComment ? FAutoCommentGeneratorUtility::GetPlayIcon() : FAutoCommentGeneratorUtility::GetStopIcon());
-	
-	bIsGeneratingComment = !bIsGeneratingComment;
-
 	return FReply::Handled();
 }
 
 void SEnhancedCommentNode::StartGeneratingComment()
 {
-	FAutoCommentGeneratorLogUtility::Log(TEXT("StartGeneratingComment"));
+	PreviousEnteredComment = GetNodeComment();
+
+	bIsGeneratingComment = bIsPlayingAnimation = true;
+
+	SetGenerateCommentButtonImage(FAutoCommentGeneratorUtility::GetStopIcon());
+
+	SetComment(TEXT("Generating Comment"));
 }
 
 void SEnhancedCommentNode::StopGeneratingComment()
 {
-	FAutoCommentGeneratorLogUtility::Log(TEXT("StopGeneratingComment"));
+	SetComment(PreviousEnteredComment);
+
+	bIsGeneratingComment = bIsPlayingAnimation = false;
+
+	SetGenerateCommentButtonImage(FAutoCommentGeneratorUtility::GetPlayIcon());
 }
