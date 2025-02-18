@@ -109,6 +109,21 @@ bool FAutoCommentGeneratorUtility::IsPinUsesDefaultValue(const UEdGraphPin* InPi
 	return !InPin->HasAnyConnections() && InPin->Direction == EEdGraphPinDirection::EGPD_Input;
 }
 
+int32 FAutoCommentGeneratorUtility::GetCharNum(const FString& InString, const TCHAR& InChar)
+{
+	int32 CharNum = 0;
+
+	for (const TCHAR Char : InString)
+	{
+		if (Char == InChar)
+		{
+			CharNum++;
+		}
+	}
+
+	return CharNum;
+}
+
 const FSlateBrush* FAutoCommentGeneratorUtility::GetPlayIcon()
 {
 	return FAppStyle::Get().GetBrush("Animation.Forward");

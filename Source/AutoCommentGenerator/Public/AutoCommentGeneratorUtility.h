@@ -28,6 +28,8 @@ public:
 	static bool IsCommentNode(const UEdGraphNode* InNode);
 
 	static bool IsPinUsesDefaultValue(const UEdGraphPin* InPin);
+
+	static int32 GetCharNum(const FString& InString, const TCHAR& InChar);
 	
 	const static FSlateBrush* GetPlayIcon();
 
