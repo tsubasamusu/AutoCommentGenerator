@@ -21,7 +21,7 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 {
 	Super::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
 
-	// play generate comment animation
+	// animation control
 	if (bIsPlayingAnimation)
 	{
 		AnimationElapsedSeconds += InDeltaTime;
@@ -55,16 +55,31 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 		}
 	}
 
-	// create generate comment button
-	if (!bHasCreatedGenerateCommentButton)
+	// button creation
+	if (!bHasCreatedButton)
 	{
 		FVector2D TitleBarSize;
 
 		if (TryGetTitleBarSize(TitleBarSize))
 		{
-			CreateGenerateCommentButton(TitleBarSize);
+			CreateButton(TitleBarSize);
 
-			bHasCreatedGenerateCommentButton = true;
+			bHasCreatedButton = true;
+		}
+	}
+
+	// button top padding control
+	{
+		FVector2D CurrentTitleBarSize;
+
+		if (TryGetTitleBarSize(CurrentTitleBarSize))
+		{
+			if (PreviousTitleBarHeight != CurrentTitleBarSize.Y)
+			{
+				OnChangedTitleBarHeight(CurrentTitleBarSize.Y);
+
+				PreviousTitleBarHeight = CurrentTitleBarSize.Y;
+			}
 		}
 	}
 }
@@ -130,57 +145,71 @@ bool SEnhancedCommentNode::TryGetTitleBarSize(FVector2D& OutTitleBarSize) const
 	return !OutTitleBarSize.IsZero();
 }
 
-void SEnhancedCommentNode::SetGenerateCommentButtonImage(const FSlateBrush* InSlateBrush)
+void SEnhancedCommentNode::SetButtonImage(const FSlateBrush* InSlateBrush)
 {
-	if (!GenerateCommentButtonImage.IsValid())
+	if (!ButtonImage.IsValid())
 	{
-		FAutoCommentGeneratorLogUtility::LogError(TEXT("Failed to set brush to the generate comment button."));
+		FAutoCommentGeneratorLogUtility::LogError(TEXT("Failed to set brush of the generate comment button."));
 
 		return;
 	}
 
-	GenerateCommentButtonImage->SetImage(InSlateBrush);
+	ButtonImage->SetImage(InSlateBrush);
 }
 
-void SEnhancedCommentNode::CreateGenerateCommentButton(const FVector2D& TitleBarSize)
+void SEnhancedCommentNode::SetButtonTopPadding(float InButtonTopPadding)
 {
-	GenerateCommentButtonImage = SNew(SImage)
+	if (!ButtonBox.IsValid())
+	{
+		FAutoCommentGeneratorLogUtility::LogError(TEXT("Failed to set top padding of the generate comment button."));
+
+		return;
+	}
+
+	ButtonBox->SetPadding(FMargin(0.f, InButtonTopPadding, 10.f, 0.f));
+}
+
+void SEnhancedCommentNode::CreateButton(const FVector2D& TitleBarSize)
+{
+	ButtonImage = SNew(SImage)
 		.ColorAndOpacity(FLinearColor::White)
 		.Image(FAutoCommentGeneratorUtility::GetPlayIcon());
 
-	this->GetOrAddSlot(ENodeZone::TopRight)
+	ButtonBox = SNew(SBox)
+		.HAlign(HAlign_Right)
+		.VAlign(VAlign_Top)
+		.Padding(0.f, TitleBarSize.Y + 10.f, 10.f, 0.f)
 		[
 			SNew(SBox)
-				.HAlign(HAlign_Right)
-				.VAlign(VAlign_Top)
-				.Padding(0.f, TitleBarSize.Y + 10.f, 10.f, 0.f)
+				.WidthOverride(15)
+				.HeightOverride(15)
 				[
-					SNew(SBox)
-						.WidthOverride(15)
-						.HeightOverride(15)
+					SNew(SButton)
+						.HAlign(HAlign_Fill)
+						.VAlign(VAlign_Fill)
+						.ContentPadding(0)
+						.ButtonStyle(FAppStyle::Get(), TEXT("NoBorder"))
+						.ButtonColorAndOpacity(GetCommentTitleBarColor())
+						.OnClicked(this, &SEnhancedCommentNode::OnClickedButton)
+						.ToolTipText(FText::FromString("Generate comment using AI"))
 						[
-							SNew(SButton)
+							SNew(SBox)
 								.HAlign(HAlign_Fill)
 								.VAlign(VAlign_Fill)
-								.ContentPadding(0)
-								.ButtonStyle(FAppStyle::Get(), TEXT("NoBorder"))
-								.ButtonColorAndOpacity(GetCommentTitleBarColor())
-								.OnClicked(this, &SEnhancedCommentNode::OnClickedGenerateCommentButton)
-								.ToolTipText(FText::FromString("Generate comment using AI"))
 								[
-									SNew(SBox)
-										.HAlign(HAlign_Fill)
-										.VAlign(VAlign_Fill)
-										[
-											GenerateCommentButtonImage.ToSharedRef()
-										]
+									ButtonImage.ToSharedRef()
 								]
 						]
 				]
 		];
+
+	this->GetOrAddSlot(ENodeZone::TopRight)
+		[
+			ButtonBox.ToSharedRef()
+		];
 }
 
-FReply SEnhancedCommentNode::OnClickedGenerateCommentButton()
+FReply SEnhancedCommentNode::OnClickedButton()
 {
 	if (bIsGeneratingComment)
 	{
@@ -194,13 +223,18 @@ FReply SEnhancedCommentNode::OnClickedGenerateCommentButton()
 	return FReply::Handled();
 }
 
+void SEnhancedCommentNode::OnChangedTitleBarHeight(const float NewTitleBarHeight)
+{
+	SetButtonTopPadding(NewTitleBarHeight + 10.f);
+}
+
 void SEnhancedCommentNode::StartGeneratingComment()
 {
 	PreviousEnteredComment = GetNodeComment();
 
 	bIsGeneratingComment = bIsPlayingAnimation = true;
 
-	SetGenerateCommentButtonImage(FAutoCommentGeneratorUtility::GetStopIcon());
+	SetButtonImage(FAutoCommentGeneratorUtility::GetStopIcon());
 
 	SetComment(TEXT("Generating Comment"));
 }
@@ -211,5 +245,5 @@ void SEnhancedCommentNode::StopGeneratingComment()
 
 	bIsGeneratingComment = bIsPlayingAnimation = false;
 
-	SetGenerateCommentButtonImage(FAutoCommentGeneratorUtility::GetPlayIcon());
+	SetButtonImage(FAutoCommentGeneratorUtility::GetPlayIcon());
 }

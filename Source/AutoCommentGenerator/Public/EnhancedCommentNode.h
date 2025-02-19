@@ -6,6 +6,7 @@
 #include "SGraphNodeComment.h"
 
 class SImage;
+class SBox;
 
 class SEnhancedCommentNode : public SGraphNodeComment
 {
@@ -27,30 +28,38 @@ public:
 
 	bool TryGetTitleBarSize(FVector2D& OutTitleBarSize) const;
 
-	void SetGenerateCommentButtonImage(const FSlateBrush* InSlateBrush);
+	void SetButtonImage(const FSlateBrush* InSlateBrush);
+
+	void SetButtonTopPadding(const float InButtonTopPadding);
 
 private:
-	void CreateGenerateCommentButton(const FVector2D& TitleBarSize);
+	void CreateButton(const FVector2D& TitleBarSize);
 
-	FReply OnClickedGenerateCommentButton();
+	FReply OnClickedButton();
+
+	void OnChangedTitleBarHeight(const float NewTitleBarHeight);
 
 	void StartGeneratingComment();
 
 	void StopGeneratingComment();
 
-	bool bHasCreatedGenerateCommentButton;
+	bool bHasCreatedButton;
 
 	bool bIsGeneratingComment;
 
 	bool bIsPlayingAnimation;
 
-	FString PreviousEnteredComment;
-
-	FString CurrentComment;
+	float PreviousTitleBarHeight;
 
 	float AnimationElapsedSeconds;
 
 	const float AnimationSpan = 0.3f;
 
-	TSharedPtr<SImage> GenerateCommentButtonImage;
+	FString PreviousEnteredComment;
+
+	FString CurrentComment;
+
+	TSharedPtr<SImage> ButtonImage;
+
+	TSharedPtr<SBox> ButtonBox;
 };
