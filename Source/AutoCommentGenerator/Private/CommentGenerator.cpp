@@ -8,7 +8,7 @@
 #include "GptRequest.h"
 #include "GptResponse.h"
 
-void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TFunction<void(bool bSucceeded, const FString& Message)>& OnGeneratedComment)
+void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TFunction<void(const bool bSucceeded, const FString& Message)>& OnGeneratedComment)
 {
 	FString GptRequestString;
 

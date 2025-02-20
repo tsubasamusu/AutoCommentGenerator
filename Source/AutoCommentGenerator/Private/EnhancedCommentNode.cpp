@@ -9,6 +9,7 @@
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Images/SImage.h"
+#include "CommentGenerator.h"
 
 void SEnhancedCommentNode::Construct(const FArguments& InArgs, UEdGraphNode_Comment* InNode)
 {
@@ -28,7 +29,7 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 
 		if (AnimationElapsedSeconds >= AnimationSpan)
 		{
-			FString Comment = TEXT("Generating Comment");
+			FString Comment = GeneratingCommentText;
 
 			if (FAutoCommentGeneratorUtility::GetCharNum(CurrentComment, '.') < 3)
 			{
@@ -236,14 +237,41 @@ void SEnhancedCommentNode::StartGeneratingComment()
 
 	SetButtonImage(FAutoCommentGeneratorUtility::GetStopIcon());
 
-	SetComment(TEXT("Generating Comment"));
+	SetComment(GeneratingCommentText);
+
+	FString NodesDataString = GetNodesDataUnderThisCommentAsJsonString();
+
+	if (NodesDataString.IsEmpty())
+	{
+		SetComment(TEXT("This comment node does not contain nodes."));
+
+		StopGeneratingComment();
+
+		return;
+	}
+
+	FCommentGenerator::GenerateComment(NodesDataString, [this](const bool bSucceeded, const FString& Message)
+		{
+			if (!bIsGeneratingComment) return;
+
+			SetComment(Message);
+
+			if (!bSucceeded) FAutoCommentGeneratorLogUtility::LogError(Message);
+
+			StopGeneratingComment();
+		});
 }
 
 void SEnhancedCommentNode::StopGeneratingComment()
 {
-	SetComment(PreviousEnteredComment);
+	if (IsSetCommentForGenerating()) SetComment(PreviousEnteredComment);
 
 	bIsGeneratingComment = bIsPlayingAnimation = false;
 
 	SetButtonImage(FAutoCommentGeneratorUtility::GetPlayIcon());
+}
+
+bool SEnhancedCommentNode::IsSetCommentForGenerating() const
+{
+	return CurrentComment.Contains(GeneratingCommentText);
 }

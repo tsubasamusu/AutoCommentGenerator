@@ -43,6 +43,8 @@ private:
 
 	void StopGeneratingComment();
 
+	bool IsSetCommentForGenerating() const;
+
 	bool bHasCreatedButton;
 
 	bool bIsGeneratingComment;
@@ -58,6 +60,8 @@ private:
 	FString PreviousEnteredComment;
 
 	FString CurrentComment;
+
+	const FString GeneratingCommentText = TEXT("Generating Comment");
 
 	TSharedPtr<SImage> ButtonImage;
 
