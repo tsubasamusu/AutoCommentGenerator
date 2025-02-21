@@ -1,11 +1,13 @@
 // Copyright (c) 2025, tsubasamusu All rights reserved.
 
 #include "AutoCommentGeneratorModule.h"
-#include "Misc/CoreDelegates.h"
+#include "AutoCommentGeneratorSettings.h"
+#include "AutoCommentGeneratorSettingsCustomization.h"
 #include "EdGraphUtilities.h"
 #include "EnhancedCommentNodeFactory.h"
-#include "AutoCommentGeneratorSettings.h"
 #include "ISettingsModule.h"
+#include "Misc/CoreDelegates.h"
+#include "PropertyEditorModule.h"
 
 #define LOCTEXT_NAMESPACE "FAutoCommentGeneratorModule"
 
@@ -53,6 +55,12 @@ void FAutoCommentGeneratorModule::RegisterSettings()
 	const FText SettingsDescription = LOCTEXT("SettingsDescription", "Configure the Auto Comment Generator plugin");
 
 	GetSettingsModuleChecked()->RegisterSettings(SettingsContainerName, SettingsCategoryName, SettingsSectionName, SettingsDisplayName, SettingsDescription, GetMutableDefault<UAutoCommentGeneratorSettings>());
+
+	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>(TEXT("PropertyEditor"));
+
+	const FName SettingsClassName = UAutoCommentGeneratorSettings::StaticClass()->GetFName();
+
+	PropertyModule.RegisterCustomClassLayout(SettingsClassName, FOnGetDetailCustomizationInstance::CreateStatic(&FAutoCommentGeneratorSettingsCustomization::Create));
 }
 
 void FAutoCommentGeneratorModule::UnregisterSettings()
