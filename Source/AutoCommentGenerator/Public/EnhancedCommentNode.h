@@ -8,7 +8,7 @@
 class SImage;
 class SBox;
 
-class SEnhancedCommentNode : public SGraphNodeComment
+class SEnhancedCommentNode final : public SGraphNodeComment
 {
 	typedef SGraphNodeComment Super;
 
@@ -20,11 +20,12 @@ public:
 
 	virtual void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
 
+private:
 	void SetComment(const FString& NewComment);
 
 	TArray<UEdGraphNode*> GetNodesUnderThisComment();
 
-	FString GetNodesDataUnderThisCommentAsJsonString();
+	bool TryGetNodesDataStringUnderThisComment(FString& OutNodesDataString);
 
 	bool TryGetTitleBarSize(FVector2D& OutTitleBarSize) const;
 
@@ -32,7 +33,6 @@ public:
 
 	void SetButtonTopPadding(const float InButtonTopPadding);
 
-private:
 	void CreateButton(const FVector2D& TitleBarSize);
 
 	FReply OnClickedButton();

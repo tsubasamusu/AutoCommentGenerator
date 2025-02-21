@@ -6,6 +6,8 @@
 #include "Settings/EditorSettings.h"
 #include "AutoCommentGeneratorSettings.generated.h"
 
+struct FLinearColor;
+
 UCLASS(config = EditorPerProjectUserSettings)
 class UAutoCommentGeneratorSettings final : public UObject
 {
@@ -16,4 +18,16 @@ public:
 
 	UPROPERTY(EditAnywhere, config, Category = GPT, meta = (DisplayName = "Open AI API Key"))
 	FString ApiKey;
+
+	UPROPERTY(EditAnywhere, config, Category = Appearance, meta = (DisplayName = "Generate Comment Button Top Padding"))
+	float ButtonTopPadding;
+
+	UPROPERTY(EditAnywhere, config, Category = Appearance, meta = (DisplayName = "Generate Comment Button Right Padding"))
+	float ButtonRightPadding;
+
+	UPROPERTY(EditAnywhere, config, Category = Appearance, meta = (DisplayName = "Generate Comment Button Color"))
+	FLinearColor ButtonColor;
+
+	UPROPERTY(EditAnywhere, config, Category = Appearance, meta = (DisplayName = "Generate Comment Button Size"))
+	FVector2D ButtonSize;
 };

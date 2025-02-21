@@ -10,6 +10,7 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Images/SImage.h"
 #include "CommentGenerator.h"
+#include "AutoCommentGeneratorSettings.h"
 
 void SEnhancedCommentNode::Construct(const FArguments& InArgs, UEdGraphNode_Comment* InNode)
 {
@@ -29,7 +30,7 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 
 		if (AnimationElapsedSeconds >= AnimationSpan)
 		{
-			FString Comment = GeneratingCommentText;
+			FString NewComment = GeneratingCommentText;
 
 			if (FAutoCommentGeneratorUtility::GetCharNum(CurrentComment, '.') < 3)
 			{
@@ -37,11 +38,11 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 
 				for (int32 i = 0; i < DesiredDotNum; i++)
 				{
-					Comment += TEXT(".");
-				};
+					NewComment += TEXT(".");
+				}
 			}
 
-			SetComment(Comment);
+			SetComment(NewComment);
 
 			AnimationElapsedSeconds = 0.f;
 		}
@@ -50,45 +51,32 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 	{
 		AnimationElapsedSeconds = 0.f;
 
-		if (GetNodeComment() != CurrentComment)
-		{
-			SetComment(CurrentComment);
-		}
+		if (GetNodeComment() != CurrentComment) SetComment(CurrentComment);
 	}
+
+	FVector2D CurrentTitleBarSize;
+
+	if (!TryGetTitleBarSize(CurrentTitleBarSize)) return;
 
 	// button creation
 	if (!bHasCreatedButton)
 	{
-		FVector2D TitleBarSize;
+		CreateButton(CurrentTitleBarSize);
 
-		if (TryGetTitleBarSize(TitleBarSize))
-		{
-			CreateButton(TitleBarSize);
-
-			bHasCreatedButton = true;
-		}
+		bHasCreatedButton = true;
 	}
 
 	// button top padding control
+	if (PreviousTitleBarHeight != CurrentTitleBarSize.Y)
 	{
-		FVector2D CurrentTitleBarSize;
+		OnChangedTitleBarHeight(CurrentTitleBarSize.Y);
 
-		if (TryGetTitleBarSize(CurrentTitleBarSize))
-		{
-			if (PreviousTitleBarHeight != CurrentTitleBarSize.Y)
-			{
-				OnChangedTitleBarHeight(CurrentTitleBarSize.Y);
-
-				PreviousTitleBarHeight = CurrentTitleBarSize.Y;
-			}
-		}
+		PreviousTitleBarHeight = CurrentTitleBarSize.Y;
 	}
 }
 
 void SEnhancedCommentNode::SetComment(const FString& NewComment)
 {
-	//TODO:enable Japanese input too
-
 	OnCommentTextCommitted(FText::FromString(NewComment), ETextCommit::Type::Default);
 
 	CurrentComment = NewComment;
@@ -98,12 +86,7 @@ TArray<UEdGraphNode*> SEnhancedCommentNode::GetNodesUnderThisComment()
 {
 	UEdGraphNode_Comment* CommentNode = Cast<UEdGraphNode_Comment>(GetNodeObj());
 
-	if (!IsValid(CommentNode))
-	{
-		FAutoCommentGeneratorLogUtility::LogError(TEXT("Type of the node being observed by SEnhancedCommentNode is not UEdGraphNode_Comment."));
-		
-		return TArray<UEdGraphNode*>();
-	}
+	check(IsValid(CommentNode));
 
 	// reconfirm nodes under this comment
 	HandleSelection(true, true);
@@ -121,22 +104,15 @@ TArray<UEdGraphNode*> SEnhancedCommentNode::GetNodesUnderThisComment()
 	return NodesUnderThisComment;
 }
 
-FString SEnhancedCommentNode::GetNodesDataUnderThisCommentAsJsonString()
+bool SEnhancedCommentNode::TryGetNodesDataStringUnderThisComment(FString& OutNodesDataString)
 {
  	const TArray<UEdGraphNode*> ActiveNodesUnderThisComment = FAutoCommentGeneratorUtility::GetActiveNodes(GetNodesUnderThisComment());
  
- 	if (ActiveNodesUnderThisComment.Num() == 0) return FString();
+ 	if (ActiveNodesUnderThisComment.Num() == 0) return false;
 
 	const TArray<FNodeData> NodesData = FAutoCommentGeneratorUtility::GetNodesData(ActiveNodesUnderThisComment);
 
-	FString JsonString;
-
-	if (!FJsonObjectConverter::UStructToJsonObjectString(FNodesData(NodesData), JsonString, 0, 0))
-	{
-		FAutoCommentGeneratorLogUtility::LogError(TEXT("Failed to convert FNodesData to JSON string."));
-	}
-
-	return JsonString;
+	return FJsonObjectConverter::UStructToJsonObjectString(FNodesData(NodesData), OutNodesDataString, 0, 0);
 }
 
 bool SEnhancedCommentNode::TryGetTitleBarSize(FVector2D& OutTitleBarSize) const
@@ -148,49 +124,42 @@ bool SEnhancedCommentNode::TryGetTitleBarSize(FVector2D& OutTitleBarSize) const
 
 void SEnhancedCommentNode::SetButtonImage(const FSlateBrush* InSlateBrush)
 {
-	if (!ButtonImage.IsValid())
-	{
-		FAutoCommentGeneratorLogUtility::LogError(TEXT("Failed to set brush of the generate comment button."));
-
-		return;
-	}
+	if (!ButtonImage.IsValid()) return;
 
 	ButtonImage->SetImage(InSlateBrush);
 }
 
-void SEnhancedCommentNode::SetButtonTopPadding(float InButtonTopPadding)
+void SEnhancedCommentNode::SetButtonTopPadding(const float InButtonTopPadding)
 {
-	if (!ButtonBox.IsValid())
-	{
-		FAutoCommentGeneratorLogUtility::LogError(TEXT("Failed to set top padding of the generate comment button."));
+	if (!ButtonBox.IsValid()) return;
 
-		return;
-	}
+	float ButtonRightPadding = FAutoCommentGeneratorUtility::GetSettingsChecked()->ButtonRightPadding;
 
-	ButtonBox->SetPadding(FMargin(0.f, InButtonTopPadding, 10.f, 0.f));
+	ButtonBox->SetPadding(FMargin(0.f, InButtonTopPadding, ButtonRightPadding, 0.f));
 }
 
 void SEnhancedCommentNode::CreateButton(const FVector2D& TitleBarSize)
 {
+	UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
+
 	ButtonImage = SNew(SImage)
-		.ColorAndOpacity(FLinearColor::White)
+		.ColorAndOpacity(AutoCommentGeneratorSettings->ButtonColor)
 		.Image(FAutoCommentGeneratorUtility::GetPlayIcon());
 
 	ButtonBox = SNew(SBox)
 		.HAlign(HAlign_Right)
 		.VAlign(VAlign_Top)
-		.Padding(0.f, TitleBarSize.Y + 10.f, 10.f, 0.f)
 		[
 			SNew(SBox)
-				.WidthOverride(15)
-				.HeightOverride(15)
+				.WidthOverride(AutoCommentGeneratorSettings->ButtonSize.X)
+				.HeightOverride(AutoCommentGeneratorSettings->ButtonSize.Y)
 				[
 					SNew(SButton)
 						.HAlign(HAlign_Fill)
 						.VAlign(VAlign_Fill)
 						.ContentPadding(0)
 						.ButtonStyle(FAppStyle::Get(), TEXT("NoBorder"))
-						.ButtonColorAndOpacity(GetCommentTitleBarColor())
+						//.ButtonColorAndOpacity(GetCommentTitleBarColor())
 						.OnClicked(this, &SEnhancedCommentNode::OnClickedButton)
 						.ToolTipText(FText::FromString("Generate comment using AI"))
 						[
@@ -208,25 +177,22 @@ void SEnhancedCommentNode::CreateButton(const FVector2D& TitleBarSize)
 		[
 			ButtonBox.ToSharedRef()
 		];
+
+	SetButtonTopPadding(TitleBarSize.Y + AutoCommentGeneratorSettings->ButtonTopPadding);
 }
 
 FReply SEnhancedCommentNode::OnClickedButton()
 {
-	if (bIsGeneratingComment)
-	{
-		StopGeneratingComment();
-	}
-	else
-	{
-		StartGeneratingComment();
-	}
+	if (bIsGeneratingComment) StopGeneratingComment();
+
+	else StartGeneratingComment();
 
 	return FReply::Handled();
 }
 
 void SEnhancedCommentNode::OnChangedTitleBarHeight(const float NewTitleBarHeight)
 {
-	SetButtonTopPadding(NewTitleBarHeight + 10.f);
+	SetButtonTopPadding(NewTitleBarHeight + FAutoCommentGeneratorUtility::GetSettingsChecked()->ButtonTopPadding);
 }
 
 void SEnhancedCommentNode::StartGeneratingComment()
@@ -239,9 +205,9 @@ void SEnhancedCommentNode::StartGeneratingComment()
 
 	SetComment(GeneratingCommentText);
 
-	FString NodesDataString = GetNodesDataUnderThisCommentAsJsonString();
+	FString NodesDataString;
 
-	if (NodesDataString.IsEmpty())
+	if (!TryGetNodesDataStringUnderThisComment(NodesDataString))
 	{
 		SetComment(TEXT("This comment node does not contain nodes."));
 
