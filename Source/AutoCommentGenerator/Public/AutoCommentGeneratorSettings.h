@@ -6,12 +6,14 @@
 #include "Settings/EditorSettings.h"
 #include "AutoCommentGeneratorSettings.generated.h"
 
-UCLASS(config = Editor)
-class UAutoCommentGeneratorSettings : public UObject
+UCLASS(config = EditorPerProjectUserSettings)
+class UAutoCommentGeneratorSettings final : public UObject
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
+	UAutoCommentGeneratorSettings(const FObjectInitializer& ObjectInitializer);
+
 	UPROPERTY(EditAnywhere, config, Category = GPT, meta = (DisplayName = "Open AI API Key"))
 	FString ApiKey;
 };

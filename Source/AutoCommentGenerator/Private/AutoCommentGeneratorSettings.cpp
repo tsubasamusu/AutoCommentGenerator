@@ -2,8 +2,7 @@
 
 #include "AutoCommentGeneratorSettings.h"
 
-UAutoCommentGeneratorSettings::UAutoCommentGeneratorSettings(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+UAutoCommentGeneratorSettings::UAutoCommentGeneratorSettings(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 
 }
