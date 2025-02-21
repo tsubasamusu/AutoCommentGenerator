@@ -4,6 +4,8 @@
 #include "Misc/CoreDelegates.h"
 #include "EdGraphUtilities.h"
 #include "EnhancedCommentNodeFactory.h"
+#include "AutoCommentGeneratorSettings.h"
+#include "ISettingsModule.h"
 
 #define LOCTEXT_NAMESPACE "FAutoCommentGeneratorModule"
 
@@ -12,14 +14,22 @@
 void FAutoCommentGeneratorModule::StartupModule()
 {
 #if ACG_IS_ENABLED
+
+	RegisterSettings();
+
 	FCoreDelegates::OnPostEngineInit.AddRaw(this, &FAutoCommentGeneratorModule::RegisterCommentNodeFactory);
+
 #endif
 }
 
 void FAutoCommentGeneratorModule::ShutdownModule()
 {
 #if ACG_IS_ENABLED
+
+	UnregisterSettings();
+
 	UnregisterCommentNodeFactory();
+
 #endif
 }
 
@@ -35,6 +45,28 @@ void FAutoCommentGeneratorModule::UnregisterCommentNodeFactory()
 	FEdGraphUtilities::UnregisterVisualNodeFactory(EnhancedCommentNodeFactoryPtr);
 
 	EnhancedCommentNodeFactoryPtr.Reset();
+}
+
+void FAutoCommentGeneratorModule::RegisterSettings()
+{
+	const FText SettingsDisplayName = LOCTEXT("SettingsDisplayName", "Auto Comment Generator");
+	const FText SettingsDescription = LOCTEXT("SettingsDescription", "Configure the Auto Comment Generator plugin");
+
+	GetSettingsModuleChecked()->RegisterSettings(SettingsContainerName, SettingsCategoryName, SettingsSectionName, SettingsDisplayName, SettingsDescription, GetMutableDefault<UAutoCommentGeneratorSettings>());
+}
+
+void FAutoCommentGeneratorModule::UnregisterSettings()
+{
+	GetSettingsModuleChecked()->UnregisterSettings(SettingsContainerName, SettingsCategoryName, SettingsSectionName);
+}
+
+ISettingsModule* FAutoCommentGeneratorModule::GetSettingsModuleChecked()
+{
+	ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>(TEXT("Settings"));
+
+	check(SettingsModule);
+
+	return SettingsModule;
 }
 
 #undef LOCTEXT_NAMESPACE

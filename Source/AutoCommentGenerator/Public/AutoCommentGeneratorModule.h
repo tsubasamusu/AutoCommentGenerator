@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
+class ISettingsModule;
 class FEnhancedCommentNodeFactory;
 
 class FAutoCommentGeneratorModule final : public IModuleInterface
@@ -16,6 +17,15 @@ public:
 private:
 	void RegisterCommentNodeFactory();
 	void UnregisterCommentNodeFactory();
+
+	void RegisterSettings();
+	void UnregisterSettings();
+
+	static ISettingsModule* GetSettingsModuleChecked();
+
+	const FName SettingsContainerName = TEXT("Editor");
+	const FName SettingsCategoryName = TEXT("Plugins");
+	const FName SettingsSectionName = TEXT("Auto Comment Generator");
 
 	TSharedPtr<FEnhancedCommentNodeFactory> EnhancedCommentNodeFactoryPtr;
 };
