@@ -19,6 +19,12 @@ public:
 	UPROPERTY(EditAnywhere, config, Category = GPT, meta = (DisplayName = "Open AI API Key"))
 	FString ApiKey;
 
+	UPROPERTY(EditAnywhere, config, Category = Behavior)
+	bool bIgnoreNodesDoNotHaveConnectedPins;
+	
+	UPROPERTY(EditAnywhere, config, Category = Behavior)
+	bool bIgnoreCommentNodes;
+
 	UPROPERTY(EditAnywhere, config, Category = Appearance, meta = (DisplayName = "Generate Comment Button Top Padding"))
 	float ButtonTopPadding;
 

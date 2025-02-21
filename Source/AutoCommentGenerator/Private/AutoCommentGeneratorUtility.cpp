@@ -14,12 +14,13 @@ TArray<FNodeData> FAutoCommentGeneratorUtility::GetNodesData(const TArray<UEdGra
 
 	for (UEdGraphNode* Node : InNodes)
 	{
-		FNodeData NodeData;
-
-		NodeData.NodeName = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString();
-		NodeData.Comment = Node->NodeComment;
-		NodeData.bIsCommentNode = IsCommentNode(Node);
-		NodeData.Pins = GetPinsData(Node);
+		FNodeData NodeData =
+		{
+			.NodeName = Node->GetNodeTitle(ENodeTitleType::FullTitle).ToString(),
+			.Comment = Node->NodeComment,
+			.bIsCommentNode = IsCommentNode(Node),
+			.Pins = GetPinsData(Node)
+		};
 
 		NodesData.Add(NodeData);
 	}
@@ -33,14 +34,15 @@ TArray<FPinData> FAutoCommentGeneratorUtility::GetPinsData(const UEdGraphNode* I
 
 	for (UEdGraphPin* Pin : InNode->GetAllPins())
 	{
-		FPinData PinData;
-
-		PinData.PinName = Pin->GetDisplayName().IsEmpty() ? Pin->PinName.ToString() : Pin->GetDisplayName().ToString();
-		PinData.PinType = GetPinTypeAsString(Pin);
-		PinData.PinId = Pin->PinId.ToString();
-		PinData.DefaultValue = Pin->GetDefaultAsString();
-		PinData.bDefaultValueIsUsed = IsPinUsesDefaultValue(Pin);
-		PinData.ConnectedPinIds = GetPinIds(Pin->LinkedTo);
+		FPinData PinData
+		{
+			.PinName = Pin->GetDisplayName().IsEmpty() ? Pin->PinName.ToString() : Pin->GetDisplayName().ToString(),
+			.PinType = GetPinTypeAsString(Pin),
+			.PinId = Pin->PinId.ToString(),
+			.DefaultValue = Pin->GetDefaultAsString(),
+			.bDefaultValueIsUsed = IsPinUsesDefaultValue(Pin),
+			.ConnectedPinIds = GetPinIds(Pin->LinkedTo)
+		};
 
 		PinsData.Add(PinData);
 	}
@@ -75,14 +77,33 @@ FString FAutoCommentGeneratorUtility::GetPinTypeAsString(const UEdGraphPin* InPi
 
 TArray<UEdGraphNode*> FAutoCommentGeneratorUtility::GetActiveNodes(const TArray<UEdGraphNode*>& InNodes)
 {
+	UAutoCommentGeneratorSettings* Settings = GetSettingsChecked();
+
 	TArray<UEdGraphNode*> ActiveNodes;
 
 	for (UEdGraphNode* Node : InNodes)
 	{
-		// ignore nodes that do not have connected pins and are not comment nodes
-		if (!HasConnectedPins(Node) && !IsCommentNode(Node)) continue;
+		if (HasConnectedPins(Node))
+		{
+			ActiveNodes.Add(Node);
 
-		ActiveNodes.Add(Node);
+			continue;
+		}
+
+		if (IsCommentNode(Node))
+		{
+			if (!Settings->bIgnoreCommentNodes)
+			{
+				ActiveNodes.Add(Node);
+			}
+
+			continue;
+		}
+
+		if (!Settings->bIgnoreNodesDoNotHaveConnectedPins)
+		{
+			ActiveNodes.Add(Node);
+		}
 	}
 
 	return ActiveNodes;
@@ -116,10 +137,7 @@ int32 FAutoCommentGeneratorUtility::GetCharNum(const FString& InString, const TC
 
 	for (const TCHAR Char : InString)
 	{
-		if (Char == InChar)
-		{
-			CharNum++;
-		}
+		if (Char == InChar) CharNum++;
 	}
 
 	return CharNum;
@@ -127,12 +145,12 @@ int32 FAutoCommentGeneratorUtility::GetCharNum(const FString& InString, const TC
 
 const FSlateBrush* FAutoCommentGeneratorUtility::GetPlayIcon()
 {
-	return FAppStyle::Get().GetBrush("Animation.Forward");
+	return FAppStyle::Get().GetBrush(TEXT("Animation.Forward"));
 }
 
 const FSlateBrush* FAutoCommentGeneratorUtility::GetStopIcon()
 {
-	return FAppStyle::Get().GetBrush("Animation.Pause");
+	return FAppStyle::Get().GetBrush(TEXT("Animation.Pause"));
 }
 
 UAutoCommentGeneratorSettings* FAutoCommentGeneratorUtility::GetSettingsChecked()

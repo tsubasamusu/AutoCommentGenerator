@@ -106,9 +106,9 @@ TArray<UEdGraphNode*> SEnhancedCommentNode::GetNodesUnderThisComment()
 
 bool SEnhancedCommentNode::TryGetNodesDataStringUnderThisComment(FString& OutNodesDataString)
 {
- 	const TArray<UEdGraphNode*> ActiveNodesUnderThisComment = FAutoCommentGeneratorUtility::GetActiveNodes(GetNodesUnderThisComment());
- 
- 	if (ActiveNodesUnderThisComment.Num() == 0) return false;
+	const TArray<UEdGraphNode*> ActiveNodesUnderThisComment = FAutoCommentGeneratorUtility::GetActiveNodes(GetNodesUnderThisComment());
+
+	if (ActiveNodesUnderThisComment.Num() == 0) return false;
 
 	const TArray<FNodeData> NodesData = FAutoCommentGeneratorUtility::GetNodesData(ActiveNodesUnderThisComment);
 
@@ -159,7 +159,6 @@ void SEnhancedCommentNode::CreateButton(const FVector2D& TitleBarSize)
 						.VAlign(VAlign_Fill)
 						.ContentPadding(0)
 						.ButtonStyle(FAppStyle::Get(), TEXT("NoBorder"))
-						//.ButtonColorAndOpacity(GetCommentTitleBarColor())
 						.OnClicked(this, &SEnhancedCommentNode::OnClickedButton)
 						.ToolTipText(FText::FromString("Generate comment using AI"))
 						[
@@ -209,7 +208,7 @@ void SEnhancedCommentNode::StartGeneratingComment()
 
 	if (!TryGetNodesDataStringUnderThisComment(NodesDataString))
 	{
-		SetComment(TEXT("This comment node does not contain nodes."));
+		SetComment(TEXT("This comment node does not contain active nodes."));
 
 		StopGeneratingComment();
 

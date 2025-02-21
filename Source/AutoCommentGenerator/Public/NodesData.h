@@ -38,7 +38,7 @@ struct FNodeData
 public:
     UPROPERTY()
     FString NodeName;
-    
+
     UPROPERTY()
     FString Comment;
 

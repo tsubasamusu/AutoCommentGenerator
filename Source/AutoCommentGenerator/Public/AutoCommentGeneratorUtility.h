@@ -31,7 +31,7 @@ public:
 	static bool IsPinUsesDefaultValue(const UEdGraphPin* InPin);
 
 	static int32 GetCharNum(const FString& InString, const TCHAR& InChar);
-	
+
 	const static FSlateBrush* GetPlayIcon();
 
 	const static FSlateBrush* GetStopIcon();

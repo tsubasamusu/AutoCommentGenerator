@@ -10,5 +10,5 @@ public:
 	static void GenerateComment(const FString& NodesDataString, const TFunction<void(const bool bSucceeded, const FString& Message)>& OnGeneratedComment);
 
 private:
-	static bool TryGetGptRequestAsJsonString(const FString& NodesDataString, FString& OutGptRequestString);
+	static bool TryGetGptRequestString(const FString& NodesDataString, FString& OutGptRequestString);
 };

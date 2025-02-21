@@ -14,7 +14,7 @@ void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TF
 {
 	FString GptRequestString;
 
-	if (!TryGetGptRequestAsJsonString(NodesDataString, GptRequestString))
+	if (!TryGetGptRequestString(NodesDataString, GptRequestString))
 	{
 		OnGeneratedComment(false, TEXT("Failed to create a GPT request."));
 
@@ -83,7 +83,7 @@ void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TF
 	}
 }
 
-bool FCommentGenerator::TryGetGptRequestAsJsonString(const FString& NodesDataString, FString& OutGptRequestString)
+bool FCommentGenerator::TryGetGptRequestString(const FString& NodesDataString, FString& OutGptRequestString)
 {
 	FGptRequest GptRequest =
 	{

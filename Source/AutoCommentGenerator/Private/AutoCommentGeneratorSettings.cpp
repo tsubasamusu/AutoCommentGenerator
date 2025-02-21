@@ -4,6 +4,9 @@
 
 UAutoCommentGeneratorSettings::UAutoCommentGeneratorSettings(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	ApiKey = TEXT("");
+	bIgnoreNodesDoNotHaveConnectedPins = true;
+	bIgnoreCommentNodes = false;
 	ButtonTopPadding = 10.f;
 	ButtonRightPadding = 10.f;
 	ButtonColor = FLinearColor::White;
