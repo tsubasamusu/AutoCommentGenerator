@@ -36,7 +36,9 @@ public class AutoCommentGenerator : ModuleRules
             "Json",
             "JsonUtilities",
             "UnrealEd",
-            "GraphEditor"
+            "GraphEditor",
+            "InternationalizationSettings",
+            "PropertyEditor"
         });
 
         DynamicallyLoadedModuleNames.AddRange(new string[]
