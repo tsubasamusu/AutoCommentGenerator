@@ -48,17 +48,17 @@ FText SGptLanguageComboButton::GetDesiredComboButtonText() const
 
 TSharedRef<SWidget> SGptLanguageComboButton::OnGetComboButtonMenuContent()
 {
- 	FCulturePtr CurrentCulture = FInternationalization::Get().GetCurrentLanguage();
- 
- 	const auto& CulturePicker = SNew(SCulturePicker)
- 		.InitialSelection(CurrentCulture)
- 		.OnSelectionChanged_Lambda([this](const FCulturePtr& InSelectedCulture, ESelectInfo::Type SelectInfo)
+    FCulturePtr CurrentCulture = SelectedCulture.IsValid() ? SelectedCulture : FInternationalization::Get().GetCurrentLanguage();
+
+    const auto& CulturePicker = SNew(SCulturePicker)
+        .InitialSelection(CurrentCulture)
+        .OnSelectionChanged_Lambda([this](const FCulturePtr& InSelectedCulture, ESelectInfo::Type SelectInfo)
             {
-				SelectedCulture = InSelectedCulture;
+                SelectedCulture = InSelectedCulture;
 
                 if (ComboButton.IsValid()) ComboButton->SetIsOpen(false);
             })
- 		.IsCulturePickable_Lambda([this](FCulturePtr Culture) -> bool
+        .IsCulturePickable_Lambda([this](FCulturePtr Culture) -> bool
             {
                 TArray<FString> CultureNames = Culture->GetPrioritizedParentCultureNames();
 
@@ -69,15 +69,15 @@ TSharedRef<SWidget> SGptLanguageComboButton::OnGetComboButtonMenuContent()
 
                 return false;
             })
- 		.DisplayNameFormat(SCulturePicker::ECultureDisplayFormat::ActiveAndNativeCultureDisplayName)
- 		.ViewMode(SCulturePicker::ECulturesViewMode::Flat);
- 
- 	return SNew(SBox)
- 		.MaxDesiredHeight(500.0f)
- 		.WidthOverride(350.0f)
- 		[
- 			CulturePicker
- 		];
+        .DisplayNameFormat(SCulturePicker::ECultureDisplayFormat::ActiveAndNativeCultureDisplayName)
+        .ViewMode(SCulturePicker::ECulturesViewMode::Flat);
+
+    return SNew(SBox)
+        .MaxDesiredHeight(500.0f)
+        .WidthOverride(350.0f)
+        [
+            CulturePicker
+        ];
 }
 
 #undef LOCTEXT_NAMESPACE
