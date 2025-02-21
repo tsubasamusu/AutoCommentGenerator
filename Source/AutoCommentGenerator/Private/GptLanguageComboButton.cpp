@@ -2,19 +2,8 @@
 
 #include "GptLanguageComboButton.h"
 #include "Internationalization/Culture.h"
-#include "Widgets/Layout/SBox.h"
-#include "Widgets/Input/SComboButton.h"
-#include "InternationalizationSettingsModel.h"
 #include "SCulturePicker.h"
-#include "DetailCategoryBuilder.h"
-#include "DetailLayoutBuilder.h"
-#include "IDetailCustomization.h"
-#include "DetailWidgetRow.h"
-#include "Widgets/Input/SButton.h"
-#include "Misc/MessageDialog.h"
-#include "Widgets/Input/SEditableTextBox.h"
-#include "UnrealEdGlobals.h"
-#include "Modules/ModuleManager.h"
+#include "Widgets/Input/SComboButton.h"
 
 #define LOCTEXT_NAMESPACE "GptLanguageComboButton"
 

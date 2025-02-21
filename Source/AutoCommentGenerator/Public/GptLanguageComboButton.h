@@ -17,27 +17,27 @@ struct FLocalizedCulturesFlyweight
         constexpr bool bIncludeDerivedCultures = false;
 
         const TArray<FString> LocalizedCultureNames = FTextLocalizationManager::Get().GetLocalizedCultureNames(ELocalizationLoadFlags::Editor);
-        
+
         LocalizedCultures = FInternationalization::Get().GetAvailableCultures(LocalizedCultureNames, bIncludeDerivedCultures);
     }
 };
 
 class SGptLanguageComboButton : public SCompoundWidget
 {
-	SLATE_BEGIN_ARGS(SGptLanguageComboButton) {}
-	SLATE_END_ARGS()
+    SLATE_BEGIN_ARGS(SGptLanguageComboButton) {}
+    SLATE_END_ARGS()
 
 public:
-	void Construct(const FArguments& InArgs, const TSharedRef<FLocalizedCulturesFlyweight>& InLocalizedCulturesFlyweight);
+    void Construct(const FArguments& InArgs, const TSharedRef<FLocalizedCulturesFlyweight>& InLocalizedCulturesFlyweight);
 
 private:
-	TSharedPtr<FLocalizedCulturesFlyweight> LocalizedCulturesFlyweight;
+    TSharedPtr<FLocalizedCulturesFlyweight> LocalizedCulturesFlyweight;
 
-	TSharedPtr<SComboButton> ComboButton;
+    TSharedPtr<SComboButton> ComboButton;
 
     FCulturePtr SelectedCulture;
 
-	FText GetDesiredComboButtonText() const;
+    FText GetDesiredComboButtonText() const;
 
-	TSharedRef<SWidget> OnGetComboButtonMenuContent();
+    TSharedRef<SWidget> OnGetComboButtonMenuContent();
 };
