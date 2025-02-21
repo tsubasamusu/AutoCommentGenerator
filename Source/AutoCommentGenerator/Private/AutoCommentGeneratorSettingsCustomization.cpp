@@ -3,7 +3,11 @@
 #include "AutoCommentGeneratorSettingsCustomization.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
+#include "GptLanguageComboButton.h"
 #include "Widgets/Input/SEditableTextBox.h"
+#include "Widgets/Text/STextBlock.h"
+
+#define LOCTEXT_NAMESPACE "AutoCommentGeneratorSettingsCustomization"
 
 TSharedRef<IDetailCustomization> FAutoCommentGeneratorSettingsCustomization::Create()
 {
@@ -13,6 +17,8 @@ TSharedRef<IDetailCustomization> FAutoCommentGeneratorSettingsCustomization::Cre
 void FAutoCommentGeneratorSettingsCustomization::CustomizeDetails(IDetailLayoutBuilder& DetailLayout)
 {
 	ChangeApiKeyPropertyDisplayAsPassword(DetailLayout);
+
+	AddGptLanguageProperty(DetailLayout);
 }
 
 void FAutoCommentGeneratorSettingsCustomization::ChangeApiKeyPropertyDisplayAsPassword(IDetailLayoutBuilder& DetailLayout)
@@ -63,3 +69,28 @@ void FAutoCommentGeneratorSettingsCustomization::ChangeApiKeyPropertyDisplayAsPa
             ];
     }
 }
+
+void FAutoCommentGeneratorSettingsCustomization::AddGptLanguageProperty(IDetailLayoutBuilder& DetailLayout)
+{
+    const FName GptCategoryName = TEXT("GPT");
+    const FText GptCategoryText = LOCTEXT("GptCategoryText", "GPT");
+    const FText GptLanguagePropertyText = LOCTEXT("GptLanguagePropertyText", "GPT Language");
+
+    IDetailCategoryBuilder& DetailCategoryBuilder = DetailLayout.EditCategory(GptCategoryName, GptCategoryText);
+
+    const TSharedRef<FLocalizedCulturesFlyweight> LocalizedCulturesFlyweight = MakeShared<FLocalizedCulturesFlyweight>();
+
+    DetailCategoryBuilder.AddCustomRow(GptLanguagePropertyText)
+        .NameContent()
+        [
+            SNew(STextBlock)
+                .Text(GptLanguagePropertyText)
+                .Font(DetailLayout.GetDetailFont())
+        ]
+        .ValueContent()
+        [
+            SNew(SGptLanguageComboButton, LocalizedCulturesFlyweight)
+        ];
+}
+
+#undef LOCTEXT_NAMESPACE

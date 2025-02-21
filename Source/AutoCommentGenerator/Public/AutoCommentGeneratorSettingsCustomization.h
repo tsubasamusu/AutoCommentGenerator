@@ -16,4 +16,6 @@ public:
 
 private:
 	void ChangeApiKeyPropertyDisplayAsPassword(IDetailLayoutBuilder& DetailLayout);
+
+	void AddGptLanguageProperty(IDetailLayoutBuilder& DetailLayout);
 };
