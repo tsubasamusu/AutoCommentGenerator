@@ -6,7 +6,7 @@
 #include "Settings/EditorSettings.h"
 #include "AutoCommentGeneratorSettings.generated.h"
 
-UCLASS(config = Editor, defaultconfig)
+UCLASS(config = Editor)
 class UAutoCommentGeneratorSettings : public UObject
 {
 	GENERATED_UCLASS_BODY()
