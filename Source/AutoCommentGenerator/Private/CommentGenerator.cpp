@@ -7,6 +7,8 @@
 #include "JsonObjectConverter.h"
 #include "GptRequest.h"
 #include "GptResponse.h"
+#include "AutoCommentGeneratorUtility.h"
+#include "AutoCommentGeneratorSettings.h"
 
 void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TFunction<void(const bool bSucceeded, const FString& Message)>& OnGeneratedComment)
 {
@@ -19,7 +21,7 @@ void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TF
 		return;
 	}
 
-	const FString ApiKey = TEXT("");
+	const FString ApiKey = FAutoCommentGeneratorUtility::GetSettingsChecked()->ApiKey;
 
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
 
