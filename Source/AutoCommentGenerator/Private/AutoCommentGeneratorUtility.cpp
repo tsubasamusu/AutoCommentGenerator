@@ -6,6 +6,7 @@
 #include "EdGraph/EdGraphPin.h"
 #include "NodesData.h"
 #include "Styling/AppStyle.h"
+#include "AutoCommentGeneratorSettings.h"
 
 TArray<FNodeData> FAutoCommentGeneratorUtility::GetNodesData(const TArray<UEdGraphNode*>& InNodes)
 {
@@ -132,4 +133,13 @@ const FSlateBrush* FAutoCommentGeneratorUtility::GetPlayIcon()
 const FSlateBrush* FAutoCommentGeneratorUtility::GetStopIcon()
 {
 	return FAppStyle::Get().GetBrush("Animation.Pause");
+}
+
+UAutoCommentGeneratorSettings* FAutoCommentGeneratorUtility::GetSettingsChecked()
+{
+	UAutoCommentGeneratorSettings* Settings = GetMutableDefault<UAutoCommentGeneratorSettings>();
+
+	check(Settings);
+
+	return Settings;
 }

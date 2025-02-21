@@ -9,6 +9,7 @@ struct FPinData;
 struct FSlateBrush;
 class UEdGraphNode;
 class UEdGraphPin;
+class UAutoCommentGeneratorSettings;
 
 class FAutoCommentGeneratorUtility
 {
@@ -34,4 +35,6 @@ public:
 	const static FSlateBrush* GetPlayIcon();
 
 	const static FSlateBrush* GetStopIcon();
+
+	static UAutoCommentGeneratorSettings* GetSettingsChecked();
 };
