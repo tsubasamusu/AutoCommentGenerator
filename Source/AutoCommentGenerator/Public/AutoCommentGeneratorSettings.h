@@ -6,8 +6,6 @@
 #include "Settings/EditorSettings.h"
 #include "AutoCommentGeneratorSettings.generated.h"
 
-struct FLinearColor;
-
 UCLASS(config = EditorPerProjectUserSettings)
 class UAutoCommentGeneratorSettings final : public UObject
 {
@@ -19,17 +17,20 @@ public:
 	UPROPERTY(EditAnywhere, config, Category = GPT, meta = (DisplayName = "Open AI API Key"))
 	FString ApiKey;
 	
+	UPROPERTY(EditAnywhere, config, Category = GPT, meta = (DisplayName = "GPT Model Name"))
+	FString GptModelName;
+	
 	UPROPERTY(VisibleAnywhere, config, Category = GPT, meta = (DisplayName = "Culture Name of GPT Language"))
 	FString GptLanguageCultureName;
 	
-	UPROPERTY(EditAnywhere, config, Category = GPT)
-	TArray<FString> CommentGenerationConditions;
-
 	UPROPERTY(EditAnywhere, config, Category = Behavior)
 	bool bIgnoreNodesDoNotHaveConnectedPins;
 	
 	UPROPERTY(EditAnywhere, config, Category = Behavior)
 	bool bIgnoreCommentNodes;
+	
+	UPROPERTY(EditAnywhere, config, Category = Behavior)
+	TArray<FString> CommentGenerationConditions;
 
 	UPROPERTY(EditAnywhere, config, Category = Appearance, meta = (DisplayName = "Generate Comment Button Top Padding"))
 	float ButtonTopPadding;

@@ -6,10 +6,11 @@
 UAutoCommentGeneratorSettings::UAutoCommentGeneratorSettings(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	ApiKey = TEXT("");
+	GptModelName = TEXT("gpt-4");
 	GptLanguageCultureName = FInternationalization::Get().GetCurrentLanguage()->GetName();
-	CommentGenerationConditions = { TEXT("answer briefly") };
 	bIgnoreNodesDoNotHaveConnectedPins = true;
 	bIgnoreCommentNodes = false;
+	CommentGenerationConditions = { TEXT("answer briefly") };
 	ButtonTopPadding = 10.f;
 	ButtonRightPadding = 10.f;
 	ButtonColor = FLinearColor::White;
