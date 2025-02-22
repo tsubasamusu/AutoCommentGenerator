@@ -32,16 +32,14 @@ public class AutoCommentGenerator : ModuleRules
             "Engine",
             "Slate",
             "SlateCore",
-            "GraphEditor",
-            "BlueprintGraph",
-            "EditorStyle",
-            "UnrealEd",
-            "InputCore",
-            "Projects",
+            "HTTP",
             "Json",
             "JsonUtilities",
-            "EngineSettings",
-            "AssetRegistry"
+            "UnrealEd",
+            "GraphEditor",
+            "InternationalizationSettings",
+            "PropertyEditor",
+            "EditorStyle"
         });
 
         DynamicallyLoadedModuleNames.AddRange(new string[]
