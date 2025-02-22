@@ -51,7 +51,7 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 	{
 		AnimationElapsedSeconds = 0.f;
 
-		if (GetNodeComment() != CurrentComment) SetComment(CurrentComment);
+		if (GetNodeComment() != CurrentComment) SetComment(GetNodeComment());
 	}
 
 	FVector2D CurrentTitleBarSize;
