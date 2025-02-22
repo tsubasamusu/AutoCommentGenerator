@@ -23,12 +23,15 @@ public:
 	UPROPERTY(VisibleAnywhere, config, Category = GPT, meta = (DisplayName = "Culture Name of GPT Language"))
 	FString GptLanguageCultureName;
 	
+	/* Whether to ignore nodes that have no input pins, output pins, execution pins, etc. connected to them when generating comments */
 	UPROPERTY(EditAnywhere, config, Category = Behavior)
 	bool bIgnoreNodesDoNotHaveConnectedPins;
 	
+	/* Whether to ignore comment nodes contained within a comment node when generating comments */
 	UPROPERTY(EditAnywhere, config, Category = Behavior)
 	bool bIgnoreCommentNodes;
 	
+	/* Conditions that AI must adhere to when generating comments */
 	UPROPERTY(EditAnywhere, config, Category = Behavior)
 	TArray<FString> CommentGenerationConditions;
 
