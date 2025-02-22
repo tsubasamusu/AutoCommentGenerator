@@ -18,4 +18,6 @@ private:
 	void ChangeApiKeyPropertyDisplayAsPassword(IDetailLayoutBuilder& DetailLayout);
 
 	void AddGptLanguageProperty(IDetailLayoutBuilder& DetailLayout);
+
+	void AddGptModelsDocumentButton(IDetailLayoutBuilder& DetailLayout);
 };

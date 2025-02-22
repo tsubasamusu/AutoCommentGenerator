@@ -3,9 +3,14 @@
 #include "AutoCommentGeneratorSettingsCustomization.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
+#include "EditorStyleSet.h"
 #include "GptLanguageComboButton.h"
+#include "Widgets/Layout/SBox.h"
+#include "Widgets/Input/SButton.h"
 #include "Widgets/Input/SEditableTextBox.h"
 #include "Widgets/Text/STextBlock.h"
+#include "Widgets/Images/SImage.h"
+#include "IDocumentation.h"
 
 #define LOCTEXT_NAMESPACE "AutoCommentGeneratorSettingsCustomization"
 
@@ -19,6 +24,8 @@ void FAutoCommentGeneratorSettingsCustomization::CustomizeDetails(IDetailLayoutB
 	ChangeApiKeyPropertyDisplayAsPassword(DetailLayout);
 
 	AddGptLanguageProperty(DetailLayout);
+
+    AddGptModelsDocumentButton(DetailLayout);
 }
 
 void FAutoCommentGeneratorSettingsCustomization::ChangeApiKeyPropertyDisplayAsPassword(IDetailLayoutBuilder& DetailLayout)
@@ -91,6 +98,81 @@ void FAutoCommentGeneratorSettingsCustomization::AddGptLanguageProperty(IDetailL
         [
             SNew(SGptLanguageComboButton, LocalizedCulturesFlyweight)
         ];
+}
+
+void FAutoCommentGeneratorSettingsCustomization::AddGptModelsDocumentButton(IDetailLayoutBuilder& DetailLayout)
+{
+    const FName GptCategoryName = TEXT("GPT");
+    const FName GptModelPropertyName = TEXT("GptModelName");
+
+    IDetailCategoryBuilder& GptCategory = DetailLayout.EditCategory(GptCategoryName);
+
+    check(!GptCategory.IsEmpty());
+
+    TArray<TSharedRef<IPropertyHandle>> GptPropertyHandles;
+
+    GptCategory.GetDefaultProperties(GptPropertyHandles);
+
+    for (const TSharedRef<IPropertyHandle>& GptPropertyHandle : GptPropertyHandles)
+    {
+        if (GptPropertyHandle->GetProperty()->GetName() != GptModelPropertyName) continue;
+
+        GptCategory.AddProperty(GptPropertyHandle)
+            .CustomWidget()
+            .NameContent()
+            [
+                GptPropertyHandle->CreatePropertyNameWidget()
+            ]
+            .ValueContent()
+            .MinDesiredWidth(200.f)
+            [
+                SNew(SHorizontalBox)
+                    + SHorizontalBox::Slot()
+                    .AutoWidth()
+                    [
+                        SNew(SEditableTextBox)
+                            .Font(FAppStyle::GetFontStyle("PropertyWindow.NormalFont"))
+                            .HintText(FText::FromString(TEXT("gpt-4")))
+                            .Text_Lambda([GptPropertyHandle]()
+                                {
+                                    FString Value;
+
+                                    GptPropertyHandle->GetValue(Value);
+
+                                    return FText::FromString(Value);
+                                })
+                            .OnTextCommitted_Lambda([GptPropertyHandle](const FText& NewText, ETextCommit::Type)
+                                {
+                                    GptPropertyHandle->SetValue(NewText.ToString());
+                                })
+                    ]
+                    + SHorizontalBox::Slot()
+                    .AutoWidth()
+                    .Padding(5.f, 0.f, 0.f, 0.f)
+                    [
+                        SNew(SButton)
+                            .ButtonStyle(FAppStyle::Get(), TEXT("NoBorder"))
+                            .ButtonColorAndOpacity(FLinearColor::White)
+                            .ToolTipText(FText::FromString(TEXT("View the types of GPT models currently available")))
+                            .OnClicked_Lambda([]()
+                                {
+                                    IDocumentation::Get()->Open(TEXT("https://platform.openai.com/docs/models"));
+
+                                    return FReply::Handled();
+                                })
+                            [
+                                SNew(SBox)
+                                    .HAlign(HAlign_Fill)
+                                    .VAlign(VAlign_Fill)
+                                    [
+                                        SNew(SImage)
+                                            .ColorAndOpacity(FLinearColor::White)
+                                            .Image(FAppStyle::Get().GetBrush(TEXT("MainFrame.VisitSearchForAnswersPage")))
+                                    ]
+                            ]
+                    ]
+            ];
+    }
 }
 
 #undef LOCTEXT_NAMESPACE

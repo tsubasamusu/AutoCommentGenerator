@@ -88,7 +88,7 @@ bool FCommentGenerator::TryGetGptRequestString(const FString& NodesDataString, F
 {
 	FGptRequest GptRequest =
 	{
-		.model = TEXT("gpt-3.5-turbo"),
+		.model = FAutoCommentGeneratorUtility::GetSettingsChecked()->GptModelName,
 		.messages =
 		{
 			{
