@@ -45,6 +45,10 @@ private:
 
 	bool IsSetCommentForGenerating() const;
 
+	FVector2D GetButtonSize() const;
+
+	void SetButtonSize(const FVector2D& NewButtonSize);
+
 	bool bHasCreatedButton;
 
 	bool bIsGeneratingComment;
@@ -65,5 +69,7 @@ private:
 
 	TSharedPtr<SImage> ButtonImage;
 
-	TSharedPtr<SBox> ButtonBox;
+	TSharedPtr<SBox> ButtonBoxForPadding;
+
+	TSharedPtr<SBox> ButtonBoxForSize;
 };

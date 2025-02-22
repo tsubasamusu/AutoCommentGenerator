@@ -73,6 +73,10 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 
 		PreviousTitleBarHeight = CurrentTitleBarSize.Y;
 	}
+
+	UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
+
+	if (GetButtonSize() != AutoCommentGeneratorSettings->ButtonSize) SetButtonSize(AutoCommentGeneratorSettings->ButtonSize);
 }
 
 void SEnhancedCommentNode::SetComment(const FString& NewComment)
@@ -131,11 +135,11 @@ void SEnhancedCommentNode::SetButtonImage(const FSlateBrush* InSlateBrush)
 
 void SEnhancedCommentNode::SetButtonTopPadding(const float InButtonTopPadding)
 {
-	if (!ButtonBox.IsValid()) return;
+	if (!ButtonBoxForPadding.IsValid()) return;
 
 	float ButtonRightPadding = FAutoCommentGeneratorUtility::GetSettingsChecked()->ButtonRightPadding;
 
-	ButtonBox->SetPadding(FMargin(0.f, InButtonTopPadding, ButtonRightPadding, 0.f));
+	ButtonBoxForPadding->SetPadding(FMargin(0.f, InButtonTopPadding, ButtonRightPadding, 0.f));
 }
 
 void SEnhancedCommentNode::CreateButton(const FVector2D& TitleBarSize)
@@ -146,35 +150,37 @@ void SEnhancedCommentNode::CreateButton(const FVector2D& TitleBarSize)
 		.ColorAndOpacity(AutoCommentGeneratorSettings->ButtonColor)
 		.Image(FAutoCommentGeneratorUtility::GetPlayIcon());
 
-	ButtonBox = SNew(SBox)
-		.HAlign(HAlign_Right)
-		.VAlign(VAlign_Top)
+	ButtonBoxForSize = SNew(SBox)
+		.WidthOverride(AutoCommentGeneratorSettings->ButtonSize.X)
+		.HeightOverride(AutoCommentGeneratorSettings->ButtonSize.Y)
 		[
-			SNew(SBox)
-				.WidthOverride(AutoCommentGeneratorSettings->ButtonSize.X)
-				.HeightOverride(AutoCommentGeneratorSettings->ButtonSize.Y)
+			SNew(SButton)
+				.HAlign(HAlign_Fill)
+				.VAlign(VAlign_Fill)
+				.ContentPadding(0)
+				.ButtonStyle(FAppStyle::Get(), TEXT("NoBorder"))
+				.OnClicked(this, &SEnhancedCommentNode::OnClickedButton)
+				.ToolTipText(FText::FromString("Generate comment using AI"))
 				[
-					SNew(SButton)
+					SNew(SBox)
 						.HAlign(HAlign_Fill)
 						.VAlign(VAlign_Fill)
-						.ContentPadding(0)
-						.ButtonStyle(FAppStyle::Get(), TEXT("NoBorder"))
-						.OnClicked(this, &SEnhancedCommentNode::OnClickedButton)
-						.ToolTipText(FText::FromString("Generate comment using AI"))
 						[
-							SNew(SBox)
-								.HAlign(HAlign_Fill)
-								.VAlign(VAlign_Fill)
-								[
-									ButtonImage.ToSharedRef()
-								]
+							ButtonImage.ToSharedRef()
 						]
 				]
 		];
 
+	ButtonBoxForPadding = SNew(SBox)
+		.HAlign(HAlign_Right)
+		.VAlign(VAlign_Top)
+		[
+			ButtonBoxForSize.ToSharedRef()
+		];
+
 	this->GetOrAddSlot(ENodeZone::TopRight)
 		[
-			ButtonBox.ToSharedRef()
+			ButtonBoxForPadding.ToSharedRef()
 		];
 
 	SetButtonTopPadding(TitleBarSize.Y + AutoCommentGeneratorSettings->ButtonTopPadding);
@@ -239,4 +245,19 @@ void SEnhancedCommentNode::StopGeneratingComment()
 bool SEnhancedCommentNode::IsSetCommentForGenerating() const
 {
 	return CurrentComment.Contains(GeneratingCommentText);
+}
+
+FVector2D SEnhancedCommentNode::GetButtonSize() const
+{
+	if (ButtonBoxForSize.IsValid()) return ButtonBoxForSize->GetCachedGeometry().GetLocalSize();
+
+	return FVector2D();
+}
+
+void SEnhancedCommentNode::SetButtonSize(const FVector2D& NewButtonSize)
+{
+	if (!ButtonBoxForSize.IsValid()) return;
+	
+	ButtonBoxForSize->SetWidthOverride(NewButtonSize.X);
+	ButtonBoxForSize->SetHeightOverride(NewButtonSize.Y);
 }
