@@ -21,6 +21,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, config, Category = GPT, meta = (DisplayName = "Culture Name of GPT Language"))
 	FString GptLanguageCultureName;
+	
+	UPROPERTY(EditAnywhere, config, Category = GPT)
+	TArray<FString> CommentGenerationConditions;
 
 	UPROPERTY(EditAnywhere, config, Category = Behavior)
 	bool bIgnoreNodesDoNotHaveConnectedPins;

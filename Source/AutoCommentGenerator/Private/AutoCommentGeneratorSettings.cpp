@@ -7,6 +7,7 @@ UAutoCommentGeneratorSettings::UAutoCommentGeneratorSettings(const FObjectInitia
 {
 	ApiKey = TEXT("");
 	GptLanguageCultureName = FInternationalization::Get().GetCurrentLanguage()->GetName();
+	CommentGenerationConditions = { TEXT("answer briefly") };
 	bIgnoreNodesDoNotHaveConnectedPins = true;
 	bIgnoreCommentNodes = false;
 	ButtonTopPadding = 10.f;

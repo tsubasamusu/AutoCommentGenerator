@@ -11,4 +11,6 @@ public:
 
 private:
 	static bool TryGetGptRequestString(const FString& NodesDataString, FString& OutGptRequestString);
+
+	static FString GetDesiredPrompt(const FString& NodesDataString);
 };

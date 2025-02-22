@@ -9,6 +9,7 @@
 #include "GptResponse.h"
 #include "AutoCommentGeneratorUtility.h"
 #include "AutoCommentGeneratorSettings.h"
+#include "Internationalization/Culture.h"
 
 void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TFunction<void(const bool bSucceeded, const FString& Message)>& OnGeneratedComment)
 {
@@ -91,15 +92,29 @@ bool FCommentGenerator::TryGetGptRequestString(const FString& NodesDataString, F
 		.messages =
 		{
 			{
-				.role = TEXT("system"),
-				.content = TEXT("You are a programmer using the Unreal Engine and specialize in writing comments for comment nodes. Other programmers submit JSON strings of blueprints to you, and you predict what they will do and return the appropriate comments.")
-			},
-			{
 				.role = TEXT("user"),
-				.content = NodesDataString
+				.content = GetDesiredPrompt(NodesDataString)
 			}
 		}
 	};
 
 	return FJsonObjectConverter::UStructToJsonObjectString(GptRequest, OutGptRequestString, 0, 0);
+}
+
+FString FCommentGenerator::GetDesiredPrompt(const FString& NodesDataString)
+{
+	UAutoCommentGeneratorSettings* Settings = FAutoCommentGeneratorUtility::GetSettingsChecked();
+
+	FString Prompt = TEXT("You are developing a game using the Unreal Engine and are going to write a comment in a comment node for a blueprint process represented by the following string in JSON format. Answer the appropriate comment to be written in the comment node according to the following conditions.");
+
+	Prompt += TEXT("\n\n- answer in ") + Settings->GetGptLanguageCulture()->GetEnglishName();
+
+	for (FString CommentGenerationCondition : Settings->CommentGenerationConditions)
+	{
+		Prompt += TEXT("\n- ") + CommentGenerationCondition;
+	}
+
+	Prompt += TEXT("\n\n") + NodesDataString;
+
+	return Prompt;
 }
