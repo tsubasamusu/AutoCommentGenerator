@@ -31,7 +31,7 @@ private:
 
 	void SetButtonImage(const FSlateBrush* InSlateBrush);
 
-	void SetButtonTopPadding(const float InButtonTopPadding);
+	void SetButtonPadding(const float InButtonTopPadding, const float InButtonRightPadding);
 
 	void CreateButton(const FVector2D& TitleBarSize);
 
@@ -53,6 +53,8 @@ private:
 
 	void SetButtonColor(const FSlateColor& NewButtonColor);
 
+	bool ButtonPaddingMatchesSettings() const;
+
 	bool bHasCreatedButton;
 
 	bool bIsGeneratingComment;
@@ -70,6 +72,8 @@ private:
 	FString CurrentComment;
 
 	const FString GeneratingCommentText = TEXT("Generating Comment");
+
+	FMargin CurrentButtonPadding;
 
 	TSharedPtr<SImage> ButtonImage;
 
