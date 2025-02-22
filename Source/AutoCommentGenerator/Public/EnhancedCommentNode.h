@@ -49,6 +49,10 @@ private:
 
 	void SetButtonSize(const FVector2D& NewButtonSize);
 
+	FSlateColor GetButtonColor() const;
+
+	void SetButtonColor(const FSlateColor& NewButtonColor);
+
 	bool bHasCreatedButton;
 
 	bool bIsGeneratingComment;

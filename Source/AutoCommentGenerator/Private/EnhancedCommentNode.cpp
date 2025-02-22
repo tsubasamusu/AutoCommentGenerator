@@ -74,9 +74,14 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 		PreviousTitleBarHeight = CurrentTitleBarSize.Y;
 	}
 
-	UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
+	// button appearance modification
+	{
+		UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
 
-	if (GetButtonSize() != AutoCommentGeneratorSettings->ButtonSize) SetButtonSize(AutoCommentGeneratorSettings->ButtonSize);
+		if (GetButtonSize() != AutoCommentGeneratorSettings->ButtonSize) SetButtonSize(AutoCommentGeneratorSettings->ButtonSize);
+
+		if (GetButtonColor() != AutoCommentGeneratorSettings->ButtonColor) SetButtonColor(AutoCommentGeneratorSettings->ButtonColor);
+	}
 }
 
 void SEnhancedCommentNode::SetComment(const FString& NewComment)
@@ -249,15 +254,24 @@ bool SEnhancedCommentNode::IsSetCommentForGenerating() const
 
 FVector2D SEnhancedCommentNode::GetButtonSize() const
 {
-	if (ButtonBoxForSize.IsValid()) return ButtonBoxForSize->GetCachedGeometry().GetLocalSize();
-
-	return FVector2D();
+	return ButtonBoxForSize.IsValid() ? ButtonBoxForSize->GetCachedGeometry().GetLocalSize() : FVector2D();
 }
 
 void SEnhancedCommentNode::SetButtonSize(const FVector2D& NewButtonSize)
 {
-	if (!ButtonBoxForSize.IsValid()) return;
-	
-	ButtonBoxForSize->SetWidthOverride(NewButtonSize.X);
-	ButtonBoxForSize->SetHeightOverride(NewButtonSize.Y);
+	if (ButtonBoxForSize.IsValid())
+	{
+		ButtonBoxForSize->SetWidthOverride(NewButtonSize.X);
+		ButtonBoxForSize->SetHeightOverride(NewButtonSize.Y);
+	}
+}
+
+FSlateColor SEnhancedCommentNode::GetButtonColor() const
+{
+	return ButtonImage.IsValid() ? ButtonImage->GetForegroundColor() : FSlateColor();
+}
+
+void SEnhancedCommentNode::SetButtonColor(const FSlateColor& NewButtonColor)
+{
+	if (ButtonImage.IsValid()) ButtonImage->SetColorAndOpacity(NewButtonColor);
 }
