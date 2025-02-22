@@ -38,7 +38,8 @@ public class AutoCommentGenerator : ModuleRules
             "UnrealEd",
             "GraphEditor",
             "InternationalizationSettings",
-            "PropertyEditor"
+            "PropertyEditor",
+            "EditorStyle"
         });
 
         DynamicallyLoadedModuleNames.AddRange(new string[]
