@@ -18,6 +18,9 @@ public:
 
 	UPROPERTY(EditAnywhere, config, Category = GPT, meta = (DisplayName = "Open AI API Key"))
 	FString ApiKey;
+	
+	UPROPERTY(VisibleAnywhere, config, Category = GPT, meta = (DisplayName = "Culture Name of GPT Language"))
+	FString GptLanguageCultureName;
 
 	UPROPERTY(EditAnywhere, config, Category = Behavior)
 	bool bIgnoreNodesDoNotHaveConnectedPins;
@@ -36,4 +39,8 @@ public:
 
 	UPROPERTY(EditAnywhere, config, Category = Appearance, meta = (DisplayName = "Generate Comment Button Size"))
 	FVector2D ButtonSize;
+
+	FCulturePtr GetGptLanguageCulture() const;
+
+	void SetGptLanguageCulture(const FCulturePtr& InGptLanguageCulture);
 };

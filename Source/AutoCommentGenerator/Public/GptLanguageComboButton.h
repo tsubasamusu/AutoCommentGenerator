@@ -35,8 +35,6 @@ private:
 
     TSharedPtr<SComboButton> ComboButton;
 
-    FCulturePtr SelectedCulture;
-
     FText GetDesiredComboButtonText() const;
 
     TSharedRef<SWidget> OnGetComboButtonMenuContent();

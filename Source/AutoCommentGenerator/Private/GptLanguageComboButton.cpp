@@ -1,5 +1,7 @@
 // Copyright (c) 2025, tsubasamusu All rights reserved.
 
+#include "AutoCommentGeneratorSettings.h"
+#include "AutoCommentGeneratorUtility.h"
 #include "GptLanguageComboButton.h"
 #include "Internationalization/Culture.h"
 #include "SCulturePicker.h"
@@ -26,24 +28,16 @@ void SGptLanguageComboButton::Construct(const FArguments& InArgs, const TSharedR
 
 FText SGptLanguageComboButton::GetDesiredComboButtonText() const
 {
-    if (SelectedCulture.IsValid()) return FText::FromString(SelectedCulture->GetNativeName());
-
-    FCulturePtr CurrentCulture = FInternationalization::Get().GetCurrentLanguage();
-
-    if (CurrentCulture.IsValid()) return FText::FromString(CurrentCulture->GetNativeName());
-
-    return LOCTEXT("None", "None");
+    return FText::FromString(FAutoCommentGeneratorUtility::GetSettingsChecked()->GetGptLanguageCulture()->GetNativeName());
 }
 
 TSharedRef<SWidget> SGptLanguageComboButton::OnGetComboButtonMenuContent()
 {
-    FCulturePtr CurrentCulture = SelectedCulture.IsValid() ? SelectedCulture : FInternationalization::Get().GetCurrentLanguage();
-
     const auto& CulturePicker = SNew(SCulturePicker)
-        .InitialSelection(CurrentCulture)
+        .InitialSelection(FAutoCommentGeneratorUtility::GetSettingsChecked()->GetGptLanguageCulture())
         .OnSelectionChanged_Lambda([this](const FCulturePtr& InSelectedCulture, ESelectInfo::Type SelectInfo)
             {
-                SelectedCulture = InSelectedCulture;
+                FAutoCommentGeneratorUtility::GetSettingsChecked()->SetGptLanguageCulture(InSelectedCulture);
 
                 if (ComboButton.IsValid()) ComboButton->SetIsOpen(false);
             })
