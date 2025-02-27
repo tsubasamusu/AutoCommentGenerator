@@ -10,16 +10,6 @@ public class AutoCommentGenerator : ModuleRules
 
         bUseUnity = false;
 
-        PublicIncludePaths.AddRange(new string[]
-        {
-
-        });
-
-        PrivateIncludePaths.AddRange(new string[]
-        {
-
-        });
-
         PublicDependencyModuleNames.AddRange(new string[]
         {
             "Core",
@@ -40,11 +30,6 @@ public class AutoCommentGenerator : ModuleRules
             "InternationalizationSettings",
             "PropertyEditor",
             "EditorStyle"
-        });
-
-        DynamicallyLoadedModuleNames.AddRange(new string[]
-        {
-
         });
     }
 }

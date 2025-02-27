@@ -12,7 +12,7 @@ TArray<FNodeData> FAutoCommentGeneratorUtility::GetNodesData(const TArray<UEdGra
 {
 	TArray<FNodeData> NodesData;
 
-	for (UEdGraphNode* Node : InNodes)
+	for (const UEdGraphNode* Node : InNodes)
 	{
 		FNodeData NodeData =
 		{
@@ -32,7 +32,7 @@ TArray<FPinData> FAutoCommentGeneratorUtility::GetPinsData(const UEdGraphNode* I
 {
 	TArray<FPinData> PinsData;
 
-	for (UEdGraphPin* Pin : InNode->GetAllPins())
+	for (const UEdGraphPin* Pin : InNode->GetAllPins())
 	{
 		FPinData PinData
 		{
@@ -54,7 +54,7 @@ TArray<FString> FAutoCommentGeneratorUtility::GetPinIds(const TArray<UEdGraphPin
 {
 	TArray<FString> PinIds;
 
-	for (UEdGraphPin* Pin : InPins)
+	for (const UEdGraphPin* Pin : InPins)
 	{
 		PinIds.Add(Pin->PinId.ToString());
 	}
@@ -77,7 +77,7 @@ FString FAutoCommentGeneratorUtility::GetPinTypeAsString(const UEdGraphPin* InPi
 
 TArray<UEdGraphNode*> FAutoCommentGeneratorUtility::GetActiveNodes(const TArray<UEdGraphNode*>& InNodes)
 {
-	UAutoCommentGeneratorSettings* Settings = GetSettingsChecked();
+	const UAutoCommentGeneratorSettings* Settings = GetSettingsChecked();
 
 	TArray<UEdGraphNode*> ActiveNodes;
 
@@ -111,11 +111,12 @@ TArray<UEdGraphNode*> FAutoCommentGeneratorUtility::GetActiveNodes(const TArray<
 
 bool FAutoCommentGeneratorUtility::HasConnectedPins(const UEdGraphNode* InNode)
 {
-	TArray<UEdGraphPin*> Pins = InNode->GetAllPins();
-
-	for (UEdGraphPin* Pin : Pins)
+	for (TArray<UEdGraphPin*> Pins = InNode->GetAllPins(); const UEdGraphPin* Pin : Pins)
 	{
-		if (Pin->HasAnyConnections()) return true;
+		if (Pin->HasAnyConnections())
+		{
+			return true;
+		}
 	}
 
 	return false;
@@ -137,7 +138,10 @@ int32 FAutoCommentGeneratorUtility::GetCharNum(const FString& InString, const TC
 
 	for (const TCHAR Char : InString)
 	{
-		if (Char == InChar) CharNum++;
+		if (Char == InChar)
+		{
+			CharNum++;
+		}
 	}
 
 	return CharNum;

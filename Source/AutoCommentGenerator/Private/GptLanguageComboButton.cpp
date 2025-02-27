@@ -26,12 +26,13 @@ void SGptLanguageComboButton::Construct(const FArguments& InArgs, const TSharedR
     ComboButton->SetOnGetMenuContent(FOnGetContent::CreateSP(this, &SGptLanguageComboButton::OnGetComboButtonMenuContent));
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic
 FText SGptLanguageComboButton::GetDesiredComboButtonText() const
 {
     return FText::FromString(FAutoCommentGeneratorUtility::GetSettingsChecked()->GetGptLanguageCulture()->GetNativeName());
 }
 
-TSharedRef<SWidget> SGptLanguageComboButton::OnGetComboButtonMenuContent()
+TSharedRef<SWidget> SGptLanguageComboButton::OnGetComboButtonMenuContent() const
 {
     const auto& CulturePicker = SNew(SCulturePicker)
         .InitialSelection(FAutoCommentGeneratorUtility::GetSettingsChecked()->GetGptLanguageCulture())
@@ -39,15 +40,19 @@ TSharedRef<SWidget> SGptLanguageComboButton::OnGetComboButtonMenuContent()
             {
                 FAutoCommentGeneratorUtility::GetSettingsChecked()->SetGptLanguageCulture(InSelectedCulture);
 
-                if (ComboButton.IsValid()) ComboButton->SetIsOpen(false);
-            })
-        .IsCulturePickable_Lambda([this](FCulturePtr Culture) -> bool
-            {
-                TArray<FString> CultureNames = Culture->GetPrioritizedParentCultureNames();
-
-                for (const FString& CultureName : CultureNames)
+                if (ComboButton.IsValid())
                 {
-                    if (LocalizedCulturesFlyweight->LocalizedCultures.Contains(Culture)) return true;
+                    ComboButton->SetIsOpen(false);
+                }
+            })
+        .IsCulturePickable_Lambda([this](const FCulturePtr& Culture) -> bool
+            {
+                for (TArray<FString> CultureNames = Culture->GetPrioritizedParentCultureNames(); const FString& CultureName : CultureNames)
+                {
+                    if (LocalizedCulturesFlyweight->LocalizedCultures.Contains(Culture))
+                    {
+                        return true;
+                    }
                 }
 
                 return false;

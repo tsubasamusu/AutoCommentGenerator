@@ -6,7 +6,7 @@
 #include "GptRequest.generated.h"
 
 USTRUCT()
-struct FGptMessage
+struct AUTOCOMMENTGENERATOR_API FGptMessage
 {
 	GENERATED_BODY()
 
@@ -19,7 +19,7 @@ public:
 };
 
 USTRUCT()
-struct FGptRequest
+struct AUTOCOMMENTGENERATOR_API FGptRequest
 {
 	GENERATED_BODY()
 

@@ -43,7 +43,10 @@ void FAutoCommentGeneratorSettingsCustomization::ChangeApiKeyPropertyDisplayAsPa
 
     for (const TSharedRef<IPropertyHandle>& GptPropertyHandle : GptPropertyHandles)
     {
-        if (GptPropertyHandle->GetProperty()->GetName() != ApiKeyPropertyName) continue;
+        if (GptPropertyHandle->GetProperty()->GetName() != ApiKeyPropertyName)
+        {
+            continue;
+        }
 
         GptCategory.AddProperty(GptPropertyHandle)
             .CustomWidget()
@@ -115,7 +118,10 @@ void FAutoCommentGeneratorSettingsCustomization::AddGptModelsDocumentButton(IDet
 
     for (const TSharedRef<IPropertyHandle>& GptPropertyHandle : GptPropertyHandles)
     {
-        if (GptPropertyHandle->GetProperty()->GetName() != GptModelPropertyName) continue;
+        if (GptPropertyHandle->GetProperty()->GetName() != GptModelPropertyName)
+        {
+            continue;
+        }
 
         GptCategory.AddProperty(GptPropertyHandle)
             .CustomWidget()
@@ -156,6 +162,7 @@ void FAutoCommentGeneratorSettingsCustomization::AddGptModelsDocumentButton(IDet
                             .ToolTipText(FText::FromString(TEXT("View the types of GPT models currently available")))
                             .OnClicked_Lambda([]()
                                 {
+                                    // ReSharper disable once CppExpressionWithoutSideEffects
                                     IDocumentation::Get()->Open(TEXT("https://platform.openai.com/docs/models"));
 
                                     return FReply::Handled();

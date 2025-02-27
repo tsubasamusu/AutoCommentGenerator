@@ -6,7 +6,7 @@
 #include "NodesData.generated.h"
 
 USTRUCT()
-struct FPinData
+struct AUTOCOMMENTGENERATOR_API FPinData
 {
     GENERATED_BODY()
 
@@ -31,7 +31,7 @@ public:
 };
 
 USTRUCT()
-struct FNodeData
+struct AUTOCOMMENTGENERATOR_API FNodeData
 {
     GENERATED_BODY()
 
@@ -50,7 +50,7 @@ public:
 };
 
 USTRUCT()
-struct FNodesData
+struct AUTOCOMMENTGENERATOR_API FNodesData
 {
     GENERATED_BODY()
 
@@ -60,5 +60,5 @@ public:
 
     FNodesData() :Nodes(TArray<FNodeData>()) {}
 
-    FNodesData(const TArray<FNodeData>& InNodesData) :Nodes(InNodesData) {}
+    explicit FNodesData(const TArray<FNodeData>& InNodesData) :Nodes(InNodesData) {}
 };

@@ -24,7 +24,7 @@ void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TF
 
 	const FString ApiKey = FAutoCommentGeneratorUtility::GetSettingsChecked()->ApiKey;
 
-	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
+	const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
 
 	HttpRequest->SetURL(TEXT("https://api.openai.com/v1/chat/completions"));
 	HttpRequest->SetVerb(TEXT("POST"));
@@ -32,7 +32,7 @@ void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TF
 	HttpRequest->SetHeader(TEXT("Authorization"), TEXT("Bearer ") + ApiKey);
 	HttpRequest->SetContentAsString(GptRequestString);
 
-	HttpRequest->OnProcessRequestComplete().BindLambda([OnGeneratedComment](FHttpRequestPtr HttpRequestPtr, FHttpResponsePtr HttpResponsePtr, bool bSucceeded)
+	HttpRequest->OnProcessRequestComplete().BindLambda([OnGeneratedComment](FHttpRequestPtr HttpRequestPtr, const FHttpResponsePtr& HttpResponsePtr, const bool bSucceeded)
 		{
 			if (!bSucceeded)
 			{
@@ -48,7 +48,7 @@ void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TF
 				return;
 			}
 
-			FString JsonResponse = HttpResponsePtr->GetContentAsString();
+			const FString JsonResponse = HttpResponsePtr->GetContentAsString();
 
 			FGptErrorResponse GptErrorResponse;
 
@@ -86,7 +86,7 @@ void FCommentGenerator::GenerateComment(const FString& NodesDataString, const TF
 
 bool FCommentGenerator::TryGetGptRequestString(const FString& NodesDataString, FString& OutGptRequestString)
 {
-	FGptRequest GptRequest =
+	const FGptRequest GptRequest =
 	{
 		.model = FAutoCommentGeneratorUtility::GetSettingsChecked()->GptModelName,
 		.messages =

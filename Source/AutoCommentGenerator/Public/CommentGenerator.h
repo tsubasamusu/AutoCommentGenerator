@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-class FCommentGenerator
+class AUTOCOMMENTGENERATOR_API FCommentGenerator
 {
 public:
 	static void GenerateComment(const FString& NodesDataString, const TFunction<void(const bool bSucceeded, const FString& Message)>& OnGeneratedComment);

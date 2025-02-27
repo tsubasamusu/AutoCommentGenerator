@@ -8,7 +8,7 @@
 class SComboButton;
 class SWidget;
 
-struct FLocalizedCulturesFlyweight
+struct AUTOCOMMENTGENERATOR_API FLocalizedCulturesFlyweight
 {
     TArray<FCultureRef> LocalizedCultures;
 
@@ -22,7 +22,7 @@ struct FLocalizedCulturesFlyweight
     }
 };
 
-class SGptLanguageComboButton : public SCompoundWidget
+class AUTOCOMMENTGENERATOR_API SGptLanguageComboButton final : public SCompoundWidget
 {
     SLATE_BEGIN_ARGS(SGptLanguageComboButton) {}
     SLATE_END_ARGS()
@@ -37,5 +37,5 @@ private:
 
     FText GetDesiredComboButtonText() const;
 
-    TSharedRef<SWidget> OnGetComboButtonMenuContent();
+    TSharedRef<SWidget> OnGetComboButtonMenuContent() const;
 };

@@ -6,9 +6,7 @@
 
 TSharedPtr<SGraphNode> FEnhancedCommentNodeFactory::CreateNode(class UEdGraphNode* Node) const
 {
-    UEdGraphNode_Comment* CommentNode = Cast<UEdGraphNode_Comment>(Node);
-
-    if (IsValid(CommentNode))
+    if (UEdGraphNode_Comment* CommentNode = Cast<UEdGraphNode_Comment>(Node); IsValid(CommentNode))
     {
         return SNew(SEnhancedCommentNode, CommentNode);
     }

@@ -11,7 +11,7 @@ class UEdGraphNode;
 class UEdGraphPin;
 class UAutoCommentGeneratorSettings;
 
-class FAutoCommentGeneratorUtility
+class AUTOCOMMENTGENERATOR_API FAutoCommentGeneratorUtility
 {
 public:
 	static TArray<FNodeData> GetNodesData(const TArray<UEdGraphNode*>& InNodes);

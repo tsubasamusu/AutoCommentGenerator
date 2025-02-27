@@ -8,7 +8,7 @@
 class ISettingsModule;
 class FEnhancedCommentNodeFactory;
 
-class FAutoCommentGeneratorModule final : public IModuleInterface
+class AUTOCOMMENTGENERATOR_API FAutoCommentGeneratorModule final : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override;
@@ -18,8 +18,8 @@ private:
 	void RegisterCommentNodeFactory();
 	void UnregisterCommentNodeFactory();
 
-	void RegisterSettings();
-	void UnregisterSettings();
+	void RegisterSettings() const;
+	void UnregisterSettings() const;
 
 	static ISettingsModule* GetSettingsModuleChecked();
 
