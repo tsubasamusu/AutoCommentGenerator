@@ -49,7 +49,7 @@ void FAutoCommentGeneratorModule::UnregisterCommentNodeFactory()
 	EnhancedCommentNodeFactoryPtr.Reset();
 }
 
-void FAutoCommentGeneratorModule::RegisterSettings()
+void FAutoCommentGeneratorModule::RegisterSettings() const
 {
 	const FText SettingsDisplayName = LOCTEXT("SettingsDisplayName", "Auto Comment Generator");
 	const FText SettingsDescription = LOCTEXT("SettingsDescription", "Configure the Auto Comment Generator plugin");
@@ -63,7 +63,7 @@ void FAutoCommentGeneratorModule::RegisterSettings()
 	PropertyModule.RegisterCustomClassLayout(SettingsClassName, FOnGetDetailCustomizationInstance::CreateStatic(&FAutoCommentGeneratorSettingsCustomization::Create));
 }
 
-void FAutoCommentGeneratorModule::UnregisterSettings()
+void FAutoCommentGeneratorModule::UnregisterSettings() const
 {
 	GetSettingsModuleChecked()->UnregisterSettings(SettingsContainerName, SettingsCategoryName, SettingsSectionName);
 }

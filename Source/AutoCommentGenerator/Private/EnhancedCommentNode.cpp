@@ -34,7 +34,7 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 
 			if (FAutoCommentGeneratorUtility::GetCharNum(CurrentComment, '.') < 3)
 			{
-				int32 DesiredDotNum = (FAutoCommentGeneratorUtility::GetCharNum(CurrentComment, '.') % 3) + 1;
+				const int32 DesiredDotNum = (FAutoCommentGeneratorUtility::GetCharNum(CurrentComment, '.') % 3) + 1;
 
 				for (int32 i = 0; i < DesiredDotNum; i++)
 				{
@@ -51,12 +51,18 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 	{
 		AnimationElapsedSeconds = 0.f;
 
-		if (GetNodeComment() != CurrentComment) SetComment(GetNodeComment());
+		if (GetNodeComment() != CurrentComment)
+		{
+			SetComment(GetNodeComment());
+		}
 	}
 
 	FVector2D CurrentTitleBarSize;
 
-	if (!TryGetTitleBarSize(CurrentTitleBarSize)) return;
+	if (!TryGetTitleBarSize(CurrentTitleBarSize))
+	{
+		return;
+	}
 
 	// button creation
 	if (!bHasCreatedButton)
@@ -78,11 +84,20 @@ void SEnhancedCommentNode::Tick(const FGeometry& AllottedGeometry, const double 
 	{
 		UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
 
-		if (GetButtonSize() != AutoCommentGeneratorSettings->ButtonSize) SetButtonSize(AutoCommentGeneratorSettings->ButtonSize);
+		if (GetButtonSize() != AutoCommentGeneratorSettings->ButtonSize)
+		{
+			SetButtonSize(AutoCommentGeneratorSettings->ButtonSize);
+		}
 
-		if (GetButtonColor() != AutoCommentGeneratorSettings->ButtonColor) SetButtonColor(AutoCommentGeneratorSettings->ButtonColor);
+		if (GetButtonColor() != AutoCommentGeneratorSettings->ButtonColor)
+		{
+			SetButtonColor(AutoCommentGeneratorSettings->ButtonColor);
+		}
 	
-		if (!ButtonPaddingMatchesSettings()) SetButtonPadding(CurrentTitleBarSize.Y + AutoCommentGeneratorSettings->ButtonTopPadding, AutoCommentGeneratorSettings->ButtonRightPadding);
+		if (!ButtonPaddingMatchesSettings())
+		{
+			SetButtonPadding(CurrentTitleBarSize.Y + AutoCommentGeneratorSettings->ButtonTopPadding, AutoCommentGeneratorSettings->ButtonRightPadding);
+		}
 	}
 }
 
@@ -93,11 +108,9 @@ void SEnhancedCommentNode::SetComment(const FString& NewComment)
 	CurrentComment = NewComment;
 }
 
-TArray<UEdGraphNode*> SEnhancedCommentNode::GetNodesUnderThisComment()
+TArray<UEdGraphNode*> SEnhancedCommentNode::GetNodesUnderThisComment() const
 {
-	UEdGraphNode_Comment* CommentNode = Cast<UEdGraphNode_Comment>(GetNodeObj());
-
-	check(IsValid(CommentNode));
+	const UEdGraphNode_Comment* CommentNode = CastChecked<UEdGraphNode_Comment>(GetNodeObj());
 
 	// reconfirm nodes under this comment
 	HandleSelection(true, true);
@@ -115,11 +128,14 @@ TArray<UEdGraphNode*> SEnhancedCommentNode::GetNodesUnderThisComment()
 	return NodesUnderThisComment;
 }
 
-bool SEnhancedCommentNode::TryGetNodesDataStringUnderThisComment(FString& OutNodesDataString)
+bool SEnhancedCommentNode::TryGetNodesDataStringUnderThisComment(FString& OutNodesDataString) const
 {
 	const TArray<UEdGraphNode*> ActiveNodesUnderThisComment = FAutoCommentGeneratorUtility::GetActiveNodes(GetNodesUnderThisComment());
 
-	if (ActiveNodesUnderThisComment.Num() == 0) return false;
+	if (ActiveNodesUnderThisComment.Num() == 0)
+	{
+		return false;
+	}
 
 	const TArray<FNodeData> NodesData = FAutoCommentGeneratorUtility::GetNodesData(ActiveNodesUnderThisComment);
 
@@ -133,16 +149,22 @@ bool SEnhancedCommentNode::TryGetTitleBarSize(FVector2D& OutTitleBarSize) const
 	return !OutTitleBarSize.IsZero();
 }
 
-void SEnhancedCommentNode::SetButtonImage(const FSlateBrush* InSlateBrush)
+void SEnhancedCommentNode::SetButtonImage(const FSlateBrush* InSlateBrush) const
 {
-	if (!ButtonImage.IsValid()) return;
+	if (!ButtonImage.IsValid())
+	{
+		return;
+	}
 
 	ButtonImage->SetImage(InSlateBrush);
 }
 
 void SEnhancedCommentNode::SetButtonPadding(const float InButtonTopPadding, const float InButtonRightPadding)
 {
-	if (!ButtonBoxForPadding.IsValid()) return;
+	if (!ButtonBoxForPadding.IsValid())
+	{
+		return;
+	}
 
 	CurrentButtonPadding = FMargin(0.f, InButtonTopPadding, InButtonRightPadding, 0.f);
 
@@ -151,7 +173,7 @@ void SEnhancedCommentNode::SetButtonPadding(const float InButtonTopPadding, cons
 
 void SEnhancedCommentNode::CreateButton(const FVector2D& TitleBarSize)
 {
-	UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
+	const UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
 
 	ButtonImage = SNew(SImage)
 		.ColorAndOpacity(AutoCommentGeneratorSettings->ButtonColor)
@@ -195,16 +217,21 @@ void SEnhancedCommentNode::CreateButton(const FVector2D& TitleBarSize)
 
 FReply SEnhancedCommentNode::OnClickedButton()
 {
-	if (bIsGeneratingComment) StopGeneratingComment();
-
-	else StartGeneratingComment();
+	if (bIsGeneratingComment)
+	{
+		StopGeneratingComment();
+	}
+	else
+	{
+		StartGeneratingComment();
+	}
 
 	return FReply::Handled();
 }
 
 void SEnhancedCommentNode::OnChangedTitleBarHeight(const float NewTitleBarHeight)
 {
-	UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
+	const UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
 
 	SetButtonPadding(NewTitleBarHeight + AutoCommentGeneratorSettings->ButtonTopPadding, AutoCommentGeneratorSettings->ButtonRightPadding);
 }
@@ -232,11 +259,17 @@ void SEnhancedCommentNode::StartGeneratingComment()
 
 	FCommentGenerator::GenerateComment(NodesDataString, [this](const bool bSucceeded, const FString& Message)
 		{
-			if (!bIsGeneratingComment) return;
+			if (!bIsGeneratingComment)
+			{
+				return;
+			}
 
 			SetComment(Message);
 
-			if (!bSucceeded) FAutoCommentGeneratorLogUtility::LogError(Message);
+			if (!bSucceeded)
+			{
+				FAutoCommentGeneratorLogUtility::LogError(Message);
+			}
 
 			StopGeneratingComment();
 		});
@@ -244,7 +277,10 @@ void SEnhancedCommentNode::StartGeneratingComment()
 
 void SEnhancedCommentNode::StopGeneratingComment()
 {
-	if (IsSetCommentForGenerating()) SetComment(PreviousEnteredComment);
+	if (IsSetCommentForGenerating())
+	{
+		SetComment(PreviousEnteredComment);
+	}
 
 	bIsGeneratingComment = bIsPlayingAnimation = false;
 
@@ -261,7 +297,7 @@ FVector2D SEnhancedCommentNode::GetButtonSize() const
 	return ButtonBoxForSize.IsValid() ? ButtonBoxForSize->GetCachedGeometry().GetLocalSize() : FVector2D();
 }
 
-void SEnhancedCommentNode::SetButtonSize(const FVector2D& NewButtonSize)
+void SEnhancedCommentNode::SetButtonSize(const FVector2D& NewButtonSize) const
 {
 	if (ButtonBoxForSize.IsValid())
 	{
@@ -275,22 +311,34 @@ FSlateColor SEnhancedCommentNode::GetButtonColor() const
 	return ButtonImage.IsValid() ? ButtonImage->GetForegroundColor() : FSlateColor();
 }
 
-void SEnhancedCommentNode::SetButtonColor(const FSlateColor& NewButtonColor)
+void SEnhancedCommentNode::SetButtonColor(const FSlateColor& NewButtonColor) const
 {
-	if (ButtonImage.IsValid()) ButtonImage->SetColorAndOpacity(NewButtonColor);
+	if (ButtonImage.IsValid())
+	{
+		ButtonImage->SetColorAndOpacity(NewButtonColor);
+	}
 }
 
 bool SEnhancedCommentNode::ButtonPaddingMatchesSettings() const
 {
 	FVector2D TitleBarSize;
 
-	if (!TryGetTitleBarSize(TitleBarSize)) return false;
+	if (!TryGetTitleBarSize(TitleBarSize))
+	{
+		return false;
+	}
 
-	UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
+	const UAutoCommentGeneratorSettings* AutoCommentGeneratorSettings = FAutoCommentGeneratorUtility::GetSettingsChecked();
 
-	if (CurrentButtonPadding.Top - TitleBarSize.Y != AutoCommentGeneratorSettings->ButtonTopPadding) return false;
+	if (CurrentButtonPadding.Top - TitleBarSize.Y != AutoCommentGeneratorSettings->ButtonTopPadding)
+	{
+		return false;
+	}
 
-	if (CurrentButtonPadding.Right != AutoCommentGeneratorSettings->ButtonRightPadding) return false;
+	if (CurrentButtonPadding.Right != AutoCommentGeneratorSettings->ButtonRightPadding)
+	{
+		return false;
+	}
 
 	return true;
 }

@@ -23,13 +23,13 @@ public:
 private:
 	void SetComment(const FString& NewComment);
 
-	TArray<UEdGraphNode*> GetNodesUnderThisComment();
+	TArray<UEdGraphNode*> GetNodesUnderThisComment() const;
 
-	bool TryGetNodesDataStringUnderThisComment(FString& OutNodesDataString);
+	bool TryGetNodesDataStringUnderThisComment(FString& OutNodesDataString) const;
 
 	bool TryGetTitleBarSize(FVector2D& OutTitleBarSize) const;
 
-	void SetButtonImage(const FSlateBrush* InSlateBrush);
+	void SetButtonImage(const FSlateBrush* InSlateBrush) const;
 
 	void SetButtonPadding(const float InButtonTopPadding, const float InButtonRightPadding);
 
@@ -47,11 +47,11 @@ private:
 
 	FVector2D GetButtonSize() const;
 
-	void SetButtonSize(const FVector2D& NewButtonSize);
+	void SetButtonSize(const FVector2D& NewButtonSize) const;
 
 	FSlateColor GetButtonColor() const;
 
-	void SetButtonColor(const FSlateColor& NewButtonColor);
+	void SetButtonColor(const FSlateColor& NewButtonColor) const;
 
 	bool ButtonPaddingMatchesSettings() const;
 

@@ -18,8 +18,8 @@ private:
 	void RegisterCommentNodeFactory();
 	void UnregisterCommentNodeFactory();
 
-	void RegisterSettings();
-	void UnregisterSettings();
+	void RegisterSettings() const;
+	void UnregisterSettings() const;
 
 	static ISettingsModule* GetSettingsModuleChecked();
 

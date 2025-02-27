@@ -37,5 +37,5 @@ private:
 
     FText GetDesiredComboButtonText() const;
 
-    TSharedRef<SWidget> OnGetComboButtonMenuContent();
+    TSharedRef<SWidget> OnGetComboButtonMenuContent() const;
 };

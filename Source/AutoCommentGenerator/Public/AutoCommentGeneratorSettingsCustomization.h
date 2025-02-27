@@ -15,9 +15,9 @@ public:
 	virtual void CustomizeDetails(IDetailLayoutBuilder& DetailLayout) override;
 
 private:
-	void ChangeApiKeyPropertyDisplayAsPassword(IDetailLayoutBuilder& DetailLayout);
+	static void ChangeApiKeyPropertyDisplayAsPassword(IDetailLayoutBuilder& DetailLayout);
 
-	void AddGptLanguageProperty(IDetailLayoutBuilder& DetailLayout);
+	static void AddGptLanguageProperty(IDetailLayoutBuilder& DetailLayout);
 
-	void AddGptModelsDocumentButton(IDetailLayoutBuilder& DetailLayout);
+	static void AddGptModelsDocumentButton(IDetailLayoutBuilder& DetailLayout);
 };
