@@ -7,7 +7,7 @@
 
 class IDetailLayoutBuilder;
 
-class FAutoCommentGeneratorSettingsCustomization : public IDetailCustomization
+class AUTOCOMMENTGENERATOR_API FAutoCommentGeneratorSettingsCustomization final : public IDetailCustomization
 {
 public:
 	static TSharedRef<IDetailCustomization> Create();

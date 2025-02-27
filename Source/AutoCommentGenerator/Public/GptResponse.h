@@ -7,7 +7,7 @@
 #include "GptResponse.generated.h"
 
 USTRUCT()
-struct FGptResponseChoice
+struct AUTOCOMMENTGENERATOR_API FGptResponseChoice
 {
 	GENERATED_BODY()
 
@@ -17,7 +17,7 @@ public:
 };
 
 USTRUCT()
-struct FGptResponse
+struct AUTOCOMMENTGENERATOR_API FGptResponse
 {
 	GENERATED_BODY()
 
@@ -27,23 +27,32 @@ public:
 
 	bool IsEmpty() const
 	{
-		if (choices.Num() == 0) return true;
+		if (choices.Num() == 0)
+		{
+			return true;
+		}
 
-		if (choices[0].message.content.IsEmpty()) return true;
+		if (choices[0].message.content.IsEmpty())
+		{
+			return true;
+		}
 
 		return false;
 	}
 
 	FString GetGptMessage()const
 	{
-		if (IsEmpty()) return FString();
+		if (IsEmpty())
+		{
+			return FString();
+		}
 
 		return choices[0].message.content;
 	}
 };
 
 USTRUCT()
-struct FGptError
+struct AUTOCOMMENTGENERATOR_API FGptError
 {
 	GENERATED_BODY()
 
@@ -59,7 +68,7 @@ public:
 };
 
 USTRUCT()
-struct FGptErrorResponse
+struct AUTOCOMMENTGENERATOR_API FGptErrorResponse
 {
 	GENERATED_BODY()
 

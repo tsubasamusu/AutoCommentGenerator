@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "EdGraphUtilities.h"
 
-class FEnhancedCommentNodeFactory : public FGraphPanelNodeFactory
+class AUTOCOMMENTGENERATOR_API FEnhancedCommentNodeFactory final : public FGraphPanelNodeFactory
 {
 	virtual TSharedPtr<SGraphNode> CreateNode(class UEdGraphNode* Node) const override;
 };

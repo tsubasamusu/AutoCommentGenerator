@@ -8,7 +8,7 @@
 class SImage;
 class SBox;
 
-class SEnhancedCommentNode final : public SGraphNodeComment
+class AUTOCOMMENTGENERATOR_API SEnhancedCommentNode final : public SGraphNodeComment
 {
 	typedef SGraphNodeComment Super;
 
@@ -55,15 +55,15 @@ private:
 
 	bool ButtonPaddingMatchesSettings() const;
 
-	bool bHasCreatedButton;
+	bool bHasCreatedButton = false;
 
-	bool bIsGeneratingComment;
+	bool bIsGeneratingComment = false;
 
-	bool bIsPlayingAnimation;
+	bool bIsPlayingAnimation = false;
 
-	float PreviousTitleBarHeight;
+	float PreviousTitleBarHeight = 0;
 
-	float AnimationElapsedSeconds;
+	float AnimationElapsedSeconds = 0;
 
 	const float AnimationSpan = 0.3f;
 

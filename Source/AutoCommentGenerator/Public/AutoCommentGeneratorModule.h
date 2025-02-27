@@ -8,7 +8,7 @@
 class ISettingsModule;
 class FEnhancedCommentNodeFactory;
 
-class FAutoCommentGeneratorModule final : public IModuleInterface
+class AUTOCOMMENTGENERATOR_API FAutoCommentGeneratorModule final : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override;
