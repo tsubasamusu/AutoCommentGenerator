@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
   "Version": 1,
-  "VersionName": "1.0.0",
+  "VersionName": "1.0.1",
   "FriendlyName": "AutoCommentGenerator",
   "Description": "",
   "Category": "TSUBASAMUSU",
@@ -10,22 +10,16 @@
   "DocsURL": "https://github.com/tsubasamusu/AutoCommentGenerator",
   "MarketplaceURL": "",
   "SupportURL": "https://tsubasamusu.com",
-  "EnabledByDefault": true,
   "CanContainContent": false,
+  "IsBetaVersion": true,
+  "EnabledByDefault": true,
+  "IsExperimentalVersion": false,
   "Installed": false,
   "Modules": [
     {
       "Name": "AutoCommentGenerator",
-      "Type": "EditorNoCommandlet",
-      "LoadingPhase": "Default",
-      "WhitelistPlatforms": [
-        "Win64",
-        "Mac",
-        "Linux"
-      ],
-      "WhitelistTargets": [
-        "Editor"
-      ]
+      "Type": "Editor",
+      "LoadingPhase": "Default"
     }
   ]
 }
