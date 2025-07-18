@@ -1,4 +1,5 @@
-# Auto Comment Generator
+# Auto Comment Generator（Legacy）
+**※このプラグインの機能は [Tsubasamusu Unreal Assist](https://github.com/tsubasamusu/TsubasamusuUnrealAssist) という別のプラグインに移行しました。今後、Auto Comment Generator ではアップデートは行われません。**
 ## 概要
 Auto Comment Generator は Unreal Engine のブループリントグラフのコメントノードのコメントを自動で生成してくれるプラグインです！
 
